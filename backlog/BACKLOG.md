@@ -1,42 +1,32 @@
-# Engineering Backlog
+# Engineering Backlog — index
 
-IDs are referenced in commit messages. Tags: `decision`, `platform`, `service`, `web`,
-`test`, `observability`. "Area" is the top-level folder(s) the item touches.
+The backlog is split into planning views generated from one task list:
 
-## Now
+| File | Content |
+|---|---|
+| [ROADMAP.md](ROADMAP.md) | 12 delivery phases, status per phase, **recommended next task** |
+| [MILESTONES.md](MILESTONES.md) | Milestones M1–M11 with exit criteria |
+| [EPICS.md](EPICS.md) | CF-EPIC-01 … CF-EPIC-18 with features and tasks |
+| [FEATURES.md](FEATURES.md) | Features F-01 … F-30 |
+| [TASKS.md](TASKS.md) | Every task with owner, priority, dependencies, acceptance criteria, agent, skills, tests and DoD |
+| [DEPENDENCIES.md](DEPENDENCIES.md) | Mermaid dependency graph, critical path, vertical slice, ready tasks |
+| [DEFINITION-OF-DONE.md](DEFINITION-OF-DONE.md) | General and type-specific Definition of Done |
 
-| ID | Item | Area | Tags |
-|---|---|---|---|
-| CF-001 | Review ADR-0002; ADR-0003 and ADR-0004 are accepted | docs | decision |
-| CF-002 | Write v1 Avro schemas for the event catalog, including `EventMetadata` | contracts | platform |
-| CF-003 | Choose contract codegen tooling for Kotlin (Gradle Avro plugin) and Go | contracts, services | decision |
-| CF-005 | Root `docker-compose.yml`: Kafka, Schema Registry, Connect/Debezium, PostgreSQL per service, Redis | infrastructure | platform |
-| CF-021 | Monorepo build tooling: independent build per service (own Gradle wrapper / go.mod / package.json) plus root scripts that detect affected services | scripts, services, apps | platform |
-| CF-006 | Scaffold order-service (Kotlin) with outbox, inbox, Flyway, health, OTel | services/order-service | service |
-| CF-007 | Scaffold inventory-service (Go) with outbox, inbox, migrations, health, OTel | services/inventory-service | service |
+## Rules
 
-## Next
+- IDs `CF-0xx` are stable and referenced from `docs/`; reference them in commit messages.
+- A task is ✅ Done only with evidence (command and result, date or commit).
+- Status changes are made in the task list and all views are regenerated together.
+- Decision tasks (CF-001, CF-004, CF-014, CF-015, CF-016, CF-025, CF-026, CF-027) are
+  resolved by the project owner; agents prepare ADRs.
 
-| ID | Item | Area | Tags |
-|---|---|---|---|
-| CF-004 | Choose cloud provider, Terraform location and state backend | infrastructure | decision |
-| CF-008 | Scaffold remaining Kotlin services from the order-service conventions | product, payment, customer, pricing | service |
-| CF-009 | Scaffold remaining Go services from the inventory-service conventions | shipping, notification | service |
-| CF-010 | Implement order saga happy path end to end | order, inventory, payment, tests/integration | service |
-| CF-011 | Saga compensation and timeouts with Toxiproxy tests | order, inventory, payment, tests/resilience | test |
-| CF-012 | Monitoring stack in Compose; trace across HTTP → outbox → Kafka → consumer | infrastructure/monitoring, services | observability |
-| CF-013 | Scaffold storefront-web and admin-web (Vite, React, TypeScript, Playwright) | apps | web |
-| CF-014 | Decide cart ownership (order-service vs dedicated context vs client-side) | docs | decision |
-| CF-015 | Decide location of catalog read model for storefront (CQRS) | docs | decision |
-| CF-016 | Choose payment provider adapter and sandbox | services/payment-service | decision |
-| CF-022 | Architecture tests that fail the build on cross-service imports or database access | services, tests | test |
+## Retired IDs
 
-## Later
-
-| ID | Item | Area | Tags |
-|---|---|---|---|
-| CF-017 | Pact contracts between web apps and services | apps, services, tests/contract | test |
-| CF-018 | k6 load test for checkout | tests/performance | test |
-| CF-019 | Helm chart per service | infrastructure/kubernetes | platform |
-| CF-020 | CI pipeline per service with path filters (service folder + contracts it uses) | all | platform |
-| CF-023 | Runbooks: Debezium replication slot growth, DLT replay, saga stuck in PENDING | docs/runbooks | platform |
+| Old ID | Replaced by |
+|---|---|
+| CF-006 (order-service beyond scaffold) | CF-055, CF-056, CF-010 |
+| CF-007 (inventory-service beyond scaffold) | CF-046, CF-048 |
+| CF-008 (Kotlin services beyond scaffold) | CF-043, CF-050, CF-052, CF-057 and per-service tasks |
+| CF-009 (Go services beyond scaffold) | CF-060, CF-063 |
+| CF-013 (web apps beyond scaffold) | CF-064, CF-073, CF-074 |
+| CF-028 (payment capture timing, delivery address) | CF-016 (capture) and the event-catalogue open point (address) |
