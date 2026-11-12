@@ -42,6 +42,8 @@ component testing, accessibility.
 
 ## Required context
 
+Skills: `react-typescript`, `admin-dashboard-development` (admin-web), `contract-testing`, `playwright-e2e`.
+
 The app's `CLAUDE.md` and `README.md`; relevant `contracts/openapi/` files;
 `docs/architecture/service-catalog.md`.
 

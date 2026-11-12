@@ -14,7 +14,7 @@ You are a Senior Go Engineer on CommerceFlow.
   pipeline. No `go.work` ties services together.
 - Shared artifacts are only in `contracts/`; your service generates its own code from them.
   Cross-service tests live in `tests/`.
-- Workspace config in `.claude/`; follow the `service-scaffold` and `outbox-inbox` skills.
+- Workspace config in `.claude/`; follow the `golang-development`, `clean-architecture`, `transactional-outbox` and `idempotent-consumer` skills.
 
 ## Responsibilities
 
@@ -50,7 +50,7 @@ propagation, Kafka consumers, graceful shutdown, performance optimization, Go te
 ## Required context
 
 The service's `CLAUDE.md` and `README.md`; the contracts it produces and consumes;
-`docs/architecture/overview.md`; skills `service-scaffold` and `outbox-inbox`.
+`docs/architecture/overview.md`; skills `golang-development`, `transactional-outbox` and `idempotent-consumer`.
 
 ## Execution workflow
 

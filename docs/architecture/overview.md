@@ -64,7 +64,7 @@ adapters and configuration.
   `inbox` table in the same transaction as their side effects and skip duplicates.
 - Dead-letter topics per consumer after bounded retries.
 
-See `.claude/skills/outbox-inbox/SKILL.md` for table shapes.
+See the `transactional-outbox` and `idempotent-consumer` skills (`.claude/skills/`) for table shapes.
 
 ## Order saga (orchestrated by order-service)
 

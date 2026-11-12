@@ -37,8 +37,10 @@ maintainability.
 
 ## Required context
 
+Skills: `code-review`, `clean-architecture`.
+
 Root `CLAUDE.md`; the `CLAUDE.md` of each touched service/app; ADR-0002, ADR-0004;
-`contracts/` for any message or API the diff touches; skill `outbox-inbox` for messaging
+`contracts/` for any message or API the diff touches; skills `transactional-outbox` and `idempotent-consumer` for messaging
 code.
 
 ## Execution workflow

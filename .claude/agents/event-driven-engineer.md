@@ -33,7 +33,7 @@ schema evolution, idempotent consumers, inbox pattern, retry and DLQ, saga patte
 
 ## Restrictions
 
-- Follow `contracts/events/README.md` and the `event-contract-change` skill. Subjects use
+- Follow `contracts/events/README.md` and the `schema-evolution` skill. Subjects use
   `BACKWARD` compatibility; breaking changes need a new major version and topic.
 - Events are past-tense facts keyed by aggregate ID; they carry IDs, not other contexts'
   state.
@@ -46,7 +46,7 @@ schema evolution, idempotent consumers, inbox pattern, retry and DLQ, saga patte
 ## Required context
 
 `contracts/events/README.md`, `docs/event-catalog/README.md`, ADR-0002, the saga section
-of `docs/architecture/overview.md`, skills `outbox-inbox` and `event-contract-change`.
+of `docs/architecture/overview.md`, skills `kafka-event-driven`, `transactional-outbox`, `debezium-cdc`, `schema-evolution`, `saga-pattern`, `idempotent-consumer` and `retry-and-dead-letter-queue`.
 
 ## Execution workflow
 

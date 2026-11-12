@@ -37,6 +37,8 @@ management, dependency security, API security, threat modeling.
 
 ## Required context
 
+Skills: `security-review`, `secure-backend-development`.
+
 Root `CLAUDE.md`, the `CLAUDE.md` of each component under review, `contracts/openapi/` for
 exposed APIs, `docker-compose.yml` and `infrastructure/` for exposure and secrets, and the
 diff or design under review.

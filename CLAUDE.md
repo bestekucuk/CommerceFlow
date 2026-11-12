@@ -90,3 +90,4 @@ Details: `docs/architecture/overview.md`.
 | Event schema rules | `contracts/events/README.md` |
 | Claude agents, skills, commands, hooks | `.claude/` |
 | Agent team, ownership and collaboration rules | `docs/agent-catalog.md` |
+| Engineering skills (how to build each part) | `docs/skill-catalog.md` |

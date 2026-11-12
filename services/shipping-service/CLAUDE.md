@@ -37,7 +37,7 @@ go.mod, Makefile        own module and build
 Dockerfile
 ```
 
-Follow the `service-scaffold` skill when creating it.
+Follow the `golang-development` and `clean-architecture` skills when creating it.
 
 ## Rules
 

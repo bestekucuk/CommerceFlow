@@ -39,7 +39,7 @@ build.gradle.kts, settings.gradle.kts, gradlew   own Gradle build (not part of a
 Dockerfile
 ```
 
-Follow the `service-scaffold` skill when creating it.
+Follow the `kotlin-springboot` and `clean-architecture` skills when creating it.
 
 ## Rules
 

@@ -1,0 +1,52 @@
+# OpenTelemetry Collector configuration template for the CommerceFlow local stack.
+# Copy to infrastructure/monitoring/otel-collector.yaml and adjust endpoints.
+receivers:
+  otlp:
+    protocols:
+      grpc: { endpoint: 0.0.0.0:4317 }
+      http: { endpoint: 0.0.0.0:4318 }
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 80
+    spike_limit_percentage: 20
+  batch: {}
+  resource:
+    attributes:
+      - key: deployment.environment
+        value: local
+        action: upsert
+  # Drop health-check spans to reduce noise.
+  filter/health:
+    error_mode: ignore
+    traces:
+      span:
+        - 'attributes["url.path"] == "/actuator/health/readiness"'
+        - 'attributes["url.path"] == "/actuator/health/liveness"'
+        - 'attributes["url.path"] == "/readyz"'
+        - 'attributes["url.path"] == "/healthz"'
+
+exporters:
+  otlp/tempo:
+    endpoint: tempo:4317
+    tls: { insecure: true }
+  prometheusremotewrite:
+    endpoint: http://prometheus:9090/api/v1/write
+  debug:
+    verbosity: basic
+
+extensions:
+  health_check: {}
+
+service:
+  extensions: [health_check]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, filter/health, resource, batch]
+      exporters: [otlp/tempo]
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, resource, batch]
+      exporters: [prometheusremotewrite]

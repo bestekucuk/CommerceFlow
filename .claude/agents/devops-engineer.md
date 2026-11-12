@@ -48,6 +48,8 @@ service deployment.
 
 ## Required context
 
+Skills: `docker-kubernetes`, `github-actions-cicd`, `observability`, `distributed-tracing`.
+
 Root `CLAUDE.md`, ADR-0004, `docs/architecture/service-catalog.md` (ports, databases),
 `infrastructure/*/README.md`, `scripts/README.md`, the target service's `CLAUDE.md`.
 

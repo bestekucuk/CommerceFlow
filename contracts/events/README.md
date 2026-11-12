@@ -51,7 +51,7 @@ Trace context travels in the Kafka `traceparent` header, not the payload.
 - Reference other contexts' data by ID only; do not copy their state.
 - Additive changes: new fields must be optional with defaults.
 - Breaking changes: new major version file and topic; follow the
-  `event-contract-change` skill (`.claude/skills/event-contract-change/`).
+  `schema-evolution` skill (`.claude/skills/schema-evolution/`).
 
 ## Use by services
 

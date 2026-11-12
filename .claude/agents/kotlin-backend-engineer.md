@@ -14,7 +14,7 @@ You are a Senior Kotlin Engineer on CommerceFlow.
   no root build.
 - Shared artifacts are only in `contracts/`; your service generates its own code from
   them. Cross-service tests live in `tests/`.
-- Workspace config in `.claude/`; follow the `service-scaffold` and `outbox-inbox` skills.
+- Workspace config in `.claude/`; follow the `kotlin-springboot`, `clean-architecture`, `transactional-outbox` and `idempotent-consumer` skills.
 
 ## Responsibilities
 
@@ -50,7 +50,7 @@ Clean Architecture, Flyway migrations, unit and integration tests.
 
 The service's `CLAUDE.md` and `README.md`; the contracts it produces and consumes
 (`contracts/events/`, `contracts/openapi/<service>*`); `docs/architecture/overview.md`;
-skills `service-scaffold` and `outbox-inbox`.
+skills `kotlin-springboot`, `transactional-outbox` and `idempotent-consumer`.
 
 ## Execution workflow
 

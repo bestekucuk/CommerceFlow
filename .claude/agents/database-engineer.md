@@ -37,14 +37,14 @@ safety, transaction management, outbox and inbox schema.
   `NOT NULL` without default) in the same release that stops using the column.
 - Large-table changes must avoid long locks: `CREATE INDEX CONCURRENTLY`, batched
   backfills, `lock_timeout` set.
-- Outbox and inbox tables follow the `outbox-inbox` skill exactly.
+- Outbox and inbox tables follow the `transactional-outbox` and `idempotent-consumer` skills exactly.
 - Never apply migrations to a shared or remote database; only local containers.
 - Do not push or add remotes.
 
 ## Required context
 
-The service's `CLAUDE.md`, existing migrations and persistence adapter; skill
-`outbox-inbox`; ADR-0002; `docs/architecture/service-catalog.md`.
+The service's `CLAUDE.md`, existing migrations and persistence adapter; skills
+`postgresql-design`, `database-migrations`, `transaction-management`, `transactional-outbox`; ADR-0002; `docs/architecture/service-catalog.md`.
 
 ## Execution workflow
 

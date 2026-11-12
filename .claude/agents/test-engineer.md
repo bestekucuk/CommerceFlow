@@ -39,6 +39,8 @@ Pact, Playwright, k6, Toxiproxy; test strategy and coverage gaps.
 
 ## Required context
 
+Skills: `unit-integration-testing`, `testcontainers`, `contract-testing`, `playwright-e2e`, `performance-testing`, `resilience-testing`.
+
 The `CLAUDE.md` of every service/app under test, `docs/architecture/overview.md` (saga),
 `docs/event-catalog/README.md`, `contracts/`, the `tests/<area>/README.md` you are working
 in.
