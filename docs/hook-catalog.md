@@ -101,7 +101,7 @@ Inspects only uncommitted changes (`git status`), so existing state never nags.
 
 | Rule | Condition | Required |
 |---|---|---|
-| A1 | `contracts/events/**` changed | `docs/event-catalog/README.md` changed too |
+| A1 | `contracts/events/**` changed | `docs/event-catalog/README.md` or `docs/event-catalog/event-catalog.md` changed too |
 | A2 | files under `services/<x>` or `apps/<x>` changed | component listed in `docs/architecture/service-catalog.md` |
 | A3 | `.claude/agents/<x>.md` changed | listed in `docs/agent-catalog.md` |
 | A4 | `.claude/skills/<x>/` changed | listed in `docs/skill-catalog.md` or `docs/workflow-catalog.md` |

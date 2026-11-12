@@ -81,7 +81,7 @@ class PlaceOrderIT : IntegrationTest() {
         val rows = jdbc.sql("SELECT type, aggregate_id, topic FROM outbox WHERE aggregate_id = :id")
             .param("id", id.value.toString()).query().listOfRows()
         assertThat(rows).singleElement().satisfies({
-            assertThat(it["type"]).isEqualTo("OrderPlaced")
+            assertThat(it["type"]).isEqualTo("OrderCreated")
             assertThat(it["topic"]).isEqualTo("cf.order.events.v1")
         })
     }

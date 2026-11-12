@@ -40,7 +40,7 @@ Context relationships: CommerceFlow contexts are **customer/supplier** through p
 events. Downstream contexts translate upstream events into their own model; they never
 reuse upstream classes.
 
-**Domain model ≠ contract.** `OrderPlaced` in `contracts/events/order/` is a stable,
+**Domain model ≠ contract.** `OrderCreated` in `contracts/events/order/` is a stable,
 versioned data shape. The `Order` aggregate in `services/order-service` can change freely
 as long as the adapter still produces the contract.
 

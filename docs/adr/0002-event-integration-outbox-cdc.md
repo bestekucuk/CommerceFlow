@@ -1,6 +1,6 @@
 # 0002. Event integration via transactional outbox and Debezium CDC
 
-- Status: Proposed
+- Status: Superseded by [0006](0006-transactional-outbox.md) and [0007](0007-debezium-cdc.md) (2026-11-12)
 - Date: 2026-11-12
 - Affected areas: `services/*`, `contracts/events`, `infrastructure/debezium`
 

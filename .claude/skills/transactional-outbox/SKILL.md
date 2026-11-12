@@ -33,7 +33,7 @@ neither. No dual write.
 | `id` | `uuid` PK | Event ID (`metadata.eventId`), Kafka header `id`, consumers' inbox key |
 | `aggregate_type` | `text` | `order`, `stock_item`, ... (diagnostics) |
 | `aggregate_id` | `text` | Kafka message key → per-aggregate ordering |
-| `type` | `text` | `OrderPlaced`, `ReserveInventory` → header `eventType` |
+| `type` | `text` | `OrderCreated`, `ReserveInventory` → header `eventType` |
 | `topic` | `text` | Destination, e.g. `cf.order.events.v1`; Debezium routes on it |
 | `payload` | `bytea` | Avro, Confluent wire format (magic byte + schema id + body) |
 | `occurred_at` | `timestamptz` | Event time |

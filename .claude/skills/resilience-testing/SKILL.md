@@ -43,7 +43,7 @@ advertised address is the proxy, or test Kafka failures by pausing the broker co
 | R1 | order-service ↔ PostgreSQL latency 2 s | API returns 503 within timeout; no partial writes; recovers when removed. |
 | R2 | inventory-service DB down 30 s while commands arrive | Blocking retries succeed after recovery; no DLT; each reservation once. |
 | R3 | Payment provider timeout | Saga: `AuthorizePayment` times out → `ReleaseInventory` → order `REJECTED`. |
-| R4 | Duplicate delivery of `InventoryReserved` | One state transition; inbox records one row. |
+| R4 | Duplicate delivery of `StockReserved` | One state transition; inbox records one row. |
 | R5 | Debezium connector stopped 5 min | Orders accepted; events delayed; all delivered after restart; slot lag alert fired. |
 | R6 | Broker paused 60 s | Consumers resume; no message loss; lag drains. |
 
@@ -122,7 +122,7 @@ func TestReservation_RecoversAfterDatabaseOutage(t *testing.T) {
 	publishReserveCommand(t, "o-r2", "SKU-1", 1)
 	time.AfterFunc(10*time.Second, func() { _ = proxy.Enable() })
 
-	waitFor(t, 60*time.Second, func() bool { return replyStatus(t, "o-r2") == "InventoryReserved" })
+	waitFor(t, 60*time.Second, func() bool { return replyStatus(t, "o-r2") == "StockReserved" })
 	if n := reservationsFor(t, "o-r2"); n != 1 {
 		t.Fatalf("reservations = %d, want 1", n)
 	}

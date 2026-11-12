@@ -1,14 +1,16 @@
 # Event Contracts
 
 Source of truth for every CommerceFlow Kafka message. No schemas exist yet; this file
-defines the rules the first schemas must follow.
+defines the rules the first schemas must follow. Detailed event definitions, naming and
+versioning: `docs/event-catalog/` (event-catalog.md, event-naming-conventions.md,
+event-versioning-policy.md).
 
 ## Layout
 
 ```
 contracts/events/
   <aggregate>/
-    <EventName>.v<major>.avsc        e.g. order/OrderPlaced.v1.avsc
+    <EventName>.v<major>.avsc        e.g. order/OrderCreated.v1.avsc
   common/
     EventMetadata.v1.avsc            shared envelope fields
 ```
@@ -35,7 +37,7 @@ Every event record includes a `metadata` field of type `EventMetadata`:
 | field | type | meaning |
 |---|---|---|
 | `eventId` | string (UUID) | unique ID; consumers' inbox key |
-| `eventType` | string | e.g. `OrderPlaced` |
+| `eventType` | string | e.g. `OrderCreated` |
 | `aggregateId` | string | matches the Kafka key |
 | `occurredAt` | timestamp-millis | when the fact happened |
 | `correlationId` | string | ties all messages of one saga/request together |
@@ -46,7 +48,7 @@ Trace context travels in the Kafka `traceparent` header, not the payload.
 
 ## Content rules
 
-- Facts are past tense (`OrderPlaced`); commands are imperative (`ReserveInventory`).
+- Facts are past tense (`OrderCreated`); commands are imperative (`ReserveInventory`).
 - Money is `{ amountMinor: long, currency: string(ISO 4217) }`. No floats.
 - Reference other contexts' data by ID only; do not copy their state.
 - Additive changes: new fields must be optional with defaults.

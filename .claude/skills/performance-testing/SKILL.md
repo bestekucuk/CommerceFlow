@@ -36,8 +36,10 @@ catch regressions before production.
 as in reality. **Asynchronous outcome**: measure saga completion time separately (poll
 order status) and watch Kafka consumer lag.
 
-Initial SLO proposals (to confirm in an ADR): catalog `GET` p95 < 200 ms; price quote p95
-< 100 ms; place order `POST` p95 < 300 ms; order confirmed p95 < 5 s; error rate < 0.5 %.
+**No performance targets are defined.** SLOs come from an ADR (CF-025) based on business
+needs and baseline measurements. Until then, run tests to *measure* baselines; scripts
+read threshold values from environment variables so no number is baked into the
+repository. Arrival rates in the example are illustrative load shapes, not expectations.
 
 ## Step-by-step workflow
 
@@ -76,13 +78,13 @@ export const options = {
       stages: [{ target: 10, duration: "2m" }, { target: 10, duration: "5m" }, { target: 0, duration: "1m" }],
     },
   },
-  thresholds: {
-    "http_req_duration{scenario:browse}": ["p(95)<200"],
-    "http_req_duration{name:place_order}": ["p(95)<300"],
-    "saga_confirmed_ms": ["p(95)<5000"],
-    "http_req_failed": ["rate<0.005"],
-    "checks": ["rate>0.99"],
-  },
+  // Thresholds only when SLOs are supplied (from the SLO ADR); otherwise the run just measures.
+  thresholds: Object.fromEntries(Object.entries({
+    "http_req_duration{scenario:browse}": __ENV.SLO_BROWSE_P95_MS && [`p(95)<${__ENV.SLO_BROWSE_P95_MS}`],
+    "http_req_duration{name:place_order}": __ENV.SLO_PLACE_ORDER_P95_MS && [`p(95)<${__ENV.SLO_PLACE_ORDER_P95_MS}`],
+    "saga_confirmed_ms": __ENV.SLO_SAGA_P95_MS && [`p(95)<${__ENV.SLO_SAGA_P95_MS}`],
+    "http_req_failed": __ENV.SLO_ERROR_RATE && [`rate<${__ENV.SLO_ERROR_RATE}`],
+  }).filter(([, v]) => v)),
 };
 
 const auth = { headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" } };

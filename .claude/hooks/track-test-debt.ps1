@@ -4,7 +4,8 @@
 #   -> adds the component to .claude/hooks/.state/test-debt-<session>.txt
 # Bash|PowerShell running a test/build command for a component
 #   (gradlew build|test|check, go test, make test|check, npm test, vitest, playwright test)
-#   -> removes that component.
+#   -> removes that component. scripts/{build,test}-service.ps1 <name> clears <name>;
+#   scripts/{build,test}-all.ps1 clears everything.
 # The Stop hook remind-tests.ps1 reads the file. No output here; always exit 0.
 
 . "$PSScriptRoot/lib/common.ps1"
@@ -40,6 +41,14 @@ elseif ($tool -in @('Bash', 'PowerShell')) {
             if ($c) { $targets = @($c) }
         }
         $pending = @($pending | Where-Object { $targets -notcontains $_ })
+    }
+    # Repository scripts: scripts/{build,test}-service.ps1 <name> and scripts/{build,test}-all.ps1
+    if ($null -eq $code -or $code -eq 0) {
+        foreach ($m in [regex]::Matches($command, 'scripts[/\\](build|test)-service\.ps1\s+([A-Za-z0-9_-]+)')) {
+            $n = $m.Groups[2].Value
+            $pending = @($pending | Where-Object { $_ -ne "services/$n" -and $_ -ne "apps/$n" })
+        }
+        if ($command -match 'scripts[/\\](build|test)-all\.ps1') { $pending = @() }
     }
 }
 

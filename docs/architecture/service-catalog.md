@@ -15,6 +15,8 @@ decided in ADR-0003.
 | `services/notification-service` | Notification | Go | `notification_db` | — | 8088 |
 | `apps/admin-web` | Back office UI | React / TypeScript | — | — | 5173 |
 | `apps/storefront-web` | Storefront UI | React / TypeScript | — | — | 5174 |
+| API gateway (planned, ADR-0010) | Edge | Open | — | — | Open |
+| admin BFF (planned, ADR-0010) | Admin UI backend | Open | session store only | — | Open |
 
 ## Responsibilities
 

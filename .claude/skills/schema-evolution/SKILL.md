@@ -40,10 +40,10 @@ then producers.
 | Add enum symbol | Only with enum `default` | Always declare `"default"` on enums |
 
 **Subjects:** `TopicRecordNameStrategy` → subject = `<topic>-<record full name>`, e.g.
-`cf.order.events.v1-com.commerceflow.events.order.OrderPlaced`. Several event types share
+`cf.order.events.v1-com.commerceflow.events.order.OrderCreated`. Several event types share
 one topic.
 
-**Major versions:** breaking change → new file `OrderPlaced.v2.avsc`, namespace stays,
+**Major versions:** breaking change → new file `OrderCreated.v2.avsc`, namespace stays,
 record name keeps, new topic `cf.order.events.v2`. Producer dual-publishes v1 and v2 until
 all consumers moved.
 
@@ -81,12 +81,12 @@ all consumers moved.
 }
 ```
 
-`contracts/events/order/OrderPlaced.v1.avsc` (after an additive change adding `channel`):
+`contracts/events/order/OrderCreated.v1.avsc` (after an additive change adding `channel`):
 
 ```json
 {
   "type": "record",
-  "name": "OrderPlaced",
+  "name": "OrderCreated",
   "namespace": "com.commerceflow.events.order",
   "fields": [
     { "name": "metadata", "type": "com.commerceflow.events.common.EventMetadata" },
@@ -104,8 +104,8 @@ all consumers moved.
 Compatibility check against Schema Registry (local stack on port 8090):
 
 ```bash
-SUBJECT="cf.order.events.v1-com.commerceflow.events.order.OrderPlaced"
-jq -n --rawfile s contracts/events/order/OrderPlaced.v1.avsc '{schema: $s, schemaType: "AVRO"}' \
+SUBJECT="cf.order.events.v1-com.commerceflow.events.order.OrderCreated"
+jq -n --rawfile s contracts/events/order/OrderCreated.v1.avsc '{schema: $s, schemaType: "AVRO"}' \
   > /tmp/req.json
 curl -s -X POST -H "Content-Type: application/vnd.schemaregistry.v1+json" \
   --data @/tmp/req.json \
@@ -135,8 +135,8 @@ val channel = event.channel?.name ?: "UNKNOWN"     // older producers send null
 ```text
 contracts/events/
   common/EventMetadata.v1.avsc, Money (inline or separate)
-  order/OrderPlaced.v1.avsc, OrderConfirmed.v1.avsc, ...
-  inventory/ReserveInventory.v1.avsc (command), InventoryReserved.v1.avsc, ...
+  order/OrderCreated.v1.avsc, OrderConfirmed.v1.avsc, ...
+  inventory/ReserveInventory.v1.avsc (command), StockReserved.v1.avsc, ...
 docs/event-catalog/README.md
 tests/contract/   compatibility check job
 ```

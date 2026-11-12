@@ -2,7 +2,7 @@
 #
 # Only paths changed in the working tree are inspected, so pre-existing state never nags.
 # Rules (all deterministic, see docs/hook-catalog.md):
-#   A1 contracts/events changed     -> docs/event-catalog/README.md changed too
+#   A1 contracts/events changed     -> docs/event-catalog/README.md or event-catalog.md changed too
 #   A2 services/<x> or apps/<x>     -> listed in docs/architecture/service-catalog.md
 #   A3 .claude/agents/<x>.md        -> listed in docs/agent-catalog.md
 #   A4 .claude/skills/<x>/          -> listed in docs/skill-catalog.md or docs/workflow-catalog.md
@@ -30,8 +30,8 @@ $issues = @()
 
 # A1
 if (($changed | Where-Object { $_ -like 'contracts/events/*' -and $_ -notlike 'contracts/events/README.md' }) -and
-    -not ($changed -contains 'docs/event-catalog/README.md')) {
-    $issues += 'A1: contracts/events changed but docs/event-catalog/README.md was not updated'
+    -not ($changed | Where-Object { $_ -in @('docs/event-catalog/README.md', 'docs/event-catalog/event-catalog.md') })) {
+    $issues += 'A1: contracts/events changed but neither docs/event-catalog/README.md nor event-catalog.md was updated'
 }
 
 # A2

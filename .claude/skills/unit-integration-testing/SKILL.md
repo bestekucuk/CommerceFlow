@@ -80,7 +80,7 @@ class PlaceOrderTest {
     private val events = mockk<OrderEvents>(relaxed = true)
 
     @Test
-    fun `placing an order saves it and records OrderPlaced`() {
+    fun `placing an order saves it and records OrderCreated`() {
         val id = PlaceOrder(orders, events) { FIXED_UUID }.handle(command())
         assertThat(orders.saved).containsKey(id)
         verify { events.record(match { it.single() is OrderDomainEvent.Placed }) }
@@ -110,8 +110,8 @@ func TestReserveStock_EmitsFailureWhenInsufficient(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if got := out.types(); !slices.Equal(got, []string{"InventoryReservationFailed"}) {
-		t.Fatalf("outbox = %v, want [InventoryReservationFailed]", got)
+	if got := out.types(); !slices.Equal(got, []string{"StockReservationFailed"}) {
+		t.Fatalf("outbox = %v, want [StockReservationFailed]", got)
 	}
 }
 ```

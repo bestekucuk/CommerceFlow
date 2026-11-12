@@ -28,10 +28,10 @@ each step is a local transaction; failures are undone by compensating steps.
 sends commands (`cf.<target>.commands.v1`) and reacts to replies/events.
 
 ```text
-PENDING --ReserveInventory--> (InventoryReserved) INVENTORY_RESERVED
+PENDING --ReserveInventory--> (StockReserved) INVENTORY_RESERVED
         --AuthorizePayment--> (PaymentAuthorized) PAYMENT_AUTHORIZED --> CONFIRMED (pivot)
 failures:
-  InventoryReservationFailed               --> REJECTED
+  StockReservationFailed               --> REJECTED
   PaymentFailed / payment timeout          --> ReleaseInventory --> REJECTED
   inventory timeout                        --> ReleaseInventory (safe if nothing reserved) --> REJECTED
 ```
@@ -77,15 +77,15 @@ CREATE INDEX saga_instance_deadline_idx ON saga_instance (deadline_at) WHERE dea
 Kotlin state machine (application layer):
 
 ```kotlin
-enum class SagaState { AWAITING_INVENTORY, AWAITING_PAYMENT, COMPENSATING_INVENTORY, COMPLETED, REJECTED }
+enum class SagaState { AWAITING_STOCK, AWAITING_PAYMENT, COMPENSATING, COMPLETED, REJECTED }
 
 sealed interface SagaInput {
     val orderId: OrderId
-    data class InventoryReserved(override val orderId: OrderId) : SagaInput
+    data class StockReserved(override val orderId: OrderId) : SagaInput
     data class InventoryFailed(override val orderId: OrderId, val reason: String) : SagaInput
     data class PaymentAuthorized(override val orderId: OrderId, val paymentId: String) : SagaInput
     data class PaymentFailed(override val orderId: OrderId, val reason: String) : SagaInput
-    data class InventoryReleased(override val orderId: OrderId) : SagaInput
+    data class StockReleased(override val orderId: OrderId) : SagaInput
     data class Timeout(override val orderId: OrderId) : SagaInput
 }
 
@@ -100,12 +100,12 @@ class PlaceOrderSaga(
         val saga = sagas.lock(input.orderId) ?: return          // unknown saga: ignore (idempotent)
         val order = orders.findById(input.orderId)!!
         when {
-            saga.state == SagaState.AWAITING_INVENTORY && input is SagaInput.InventoryReserved -> {
+            saga.state == SagaState.AWAITING_STOCK && input is SagaInput.StockReserved -> {
                 order.markInventoryReserved()
                 commands.authorizePayment(order)
                 saga.await(SagaState.AWAITING_PAYMENT, clock.instant().plusSeconds(60))
             }
-            saga.state == SagaState.AWAITING_INVENTORY && input is SagaInput.InventoryFailed -> {
+            saga.state == SagaState.AWAITING_STOCK && input is SagaInput.InventoryFailed -> {
                 order.reject(input.reason)
                 saga.finish(SagaState.REJECTED)
             }
@@ -121,13 +121,13 @@ Prefer an explicit transition table over nested `when` once it grows:
 
 ```kotlin
 val transitions: Map<Pair<SagaState, KClass<out SagaInput>>, (Ctx) -> Unit> = mapOf(
-    (SagaState.AWAITING_INVENTORY to SagaInput.InventoryReserved::class) to { it.requestPayment() },
-    (SagaState.AWAITING_INVENTORY to SagaInput.InventoryFailed::class)   to { it.reject() },
-    (SagaState.AWAITING_INVENTORY to SagaInput.Timeout::class)           to { it.releaseInventoryThenReject() },
+    (SagaState.AWAITING_STOCK to SagaInput.StockReserved::class) to { it.requestPayment() },
+    (SagaState.AWAITING_STOCK to SagaInput.InventoryFailed::class)   to { it.reject() },
+    (SagaState.AWAITING_STOCK to SagaInput.Timeout::class)           to { it.releaseInventoryThenReject() },
     (SagaState.AWAITING_PAYMENT   to SagaInput.PaymentAuthorized::class) to { it.confirm() },
     (SagaState.AWAITING_PAYMENT   to SagaInput.PaymentFailed::class)     to { it.releaseInventoryThenReject() },
     (SagaState.AWAITING_PAYMENT   to SagaInput.Timeout::class)           to { it.voidPaymentReleaseInventoryThenReject() },
-    (SagaState.COMPENSATING_INVENTORY to SagaInput.InventoryReleased::class) to { it.reject() },
+    (SagaState.COMPENSATING to SagaInput.StockReleased::class) to { it.reject() },
 )
 ```
 
@@ -155,7 +155,7 @@ func (u *ReleaseInventory) Handle(ctx context.Context, tx pgx.Tx, cmd ReleaseCom
 		return err
 	}
 	// Always reply, even when nothing was reserved (0 rows updated): the saga waits for the reply.
-	return u.outbox.Add(ctx, tx, events.InventoryReleased(cmd))
+	return u.outbox.Add(ctx, tx, events.StockReleased(cmd))
 }
 ```
 
@@ -191,7 +191,7 @@ tests/integration/, tests/resilience/              saga scenarios
 
 | Scenario | Outcome |
 |---|---|
-| Duplicate `InventoryReserved` | Inbox drops it; or state check makes it a no-op. |
+| Duplicate `StockReserved` | Inbox drops it; or state check makes it a no-op. |
 | `PaymentAuthorized` after payment timeout fired | State is `COMPENSATING_*`: void the late authorization (send `VoidPayment`). |
 | Inventory down for 10 min | Timeout → release (no-op) → `REJECTED`; customer notified. |
 | Order-service crash mid-transition | Tx rolled back; reply redelivered; transition replays. |

@@ -149,6 +149,14 @@ $md = Write-File $t 'services/order-service/README.md' "x`n"
 Invoke-Hook 'track-test-debt.ps1' @{ session_id = $sid; tool_name = 'Write'; tool_input = @{ file_path = $md } } $t | Out-Null
 $r = Invoke-Hook 'remind-tests.ps1' @{ session_id = $sid; stop_hook_active = $false } $t
 Assert 'markdown edit creates no debt' ($r.Code -eq 0 -and -not $r.Decision) $r
+Invoke-Hook 'track-test-debt.ps1' @{ session_id = $sid; tool_name = 'Edit'; tool_input = @{ file_path = $kt } } $t | Out-Null
+Invoke-Hook 'track-test-debt.ps1' @{ session_id = $sid; tool_name = 'Bash'; tool_input = @{ command = 'powershell -File scripts/test-service.ps1 order-service' } } $t | Out-Null
+$r = Invoke-Hook 'remind-tests.ps1' @{ session_id = $sid; stop_hook_active = $false } $t
+Assert 'test-service.ps1 clears debt' ($r.Code -eq 0 -and -not $r.Decision) $r
+Invoke-Hook 'track-test-debt.ps1' @{ session_id = $sid; tool_name = 'Edit'; tool_input = @{ file_path = $kt } } $t | Out-Null
+Invoke-Hook 'track-test-debt.ps1' @{ session_id = $sid; tool_name = 'Bash'; tool_input = @{ command = 'powershell -File scripts/test-all.ps1' } } $t | Out-Null
+$r = Invoke-Hook 'remind-tests.ps1' @{ session_id = $sid; stop_hook_active = $false } $t
+Assert 'test-all.ps1 clears debt' ($r.Code -eq 0 -and -not $r.Decision) $r
 Remove-Item $t -Recurse -Force
 
 # ---------------------------------------------------------------- check-architecture-docs
@@ -165,13 +173,18 @@ Write-File $t 'docs/adr/README.md' "x`n" | Out-Null
 $stop = @{ session_id = 's'; stop_hook_active = $false }
 $r = Invoke-Hook 'check-architecture-docs.ps1' $stop $t
 Assert 'clean tree passes' ($r.Code -eq 0 -and -not $r.Decision) $r
-Write-File $t 'contracts/events/order/OrderPlaced.v1.avsc' "{}`n" | Out-Null
+Write-File $t 'contracts/events/order/OrderCreated.v1.avsc' "{}`n" | Out-Null
 $r = Invoke-Hook 'check-architecture-docs.ps1' $stop $t
 Assert 'A1 contract without catalog' ($r.Decision -eq 'block' -and $r.Out -match 'A1') $r
-Add-Content (Join-Path $t 'docs/event-catalog/README.md') '| OrderPlaced |'
+Add-Content (Join-Path $t 'docs/event-catalog/README.md') '| OrderCreated |'
 $r = Invoke-Hook 'check-architecture-docs.ps1' $stop $t
 Assert 'A1 satisfied when catalog changes' ($r.Code -eq 0 -and -not $r.Decision) $r
 & git -C $t add -A; & git -C $t commit -q -m c1
+Write-File $t 'contracts/events/order/OrderConfirmed.v1.avsc' "{}`n" | Out-Null
+Write-File $t 'docs/event-catalog/event-catalog.md' "### OrderConfirmed`n" | Out-Null
+$r = Invoke-Hook 'check-architecture-docs.ps1' $stop $t
+Assert 'A1 satisfied by detailed event-catalog.md' ($r.Code -eq 0 -and -not $r.Decision) $r
+& git -C $t add -A; & git -C $t commit -q -m c2
 Write-File $t 'services/ghost-service/README.md' "x`n" | Out-Null
 $r = Invoke-Hook 'check-architecture-docs.ps1' $stop $t
 Assert 'A2 unknown service' ($r.Decision -eq 'block' -and $r.Out -match 'A2') $r
