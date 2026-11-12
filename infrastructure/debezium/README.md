@@ -1,7 +1,9 @@
 # infrastructure/debezium
 
-Status: **empty scaffold**.
+Status: **implemented for local development** — see `infrastructure/README.md`.
 
-Will contain: Kafka Connect configuration and one PostgreSQL outbox connector per service using the Outbox Event Router.
+| File | Purpose |
+|---|---|
+| `connectors/<svc>-outbox.json` | Outbox connector per publishing service (7). Passwords as `${env:<SVC>_DB_CDC_PASSWORD}` |
 
-No secrets are committed; required variables are documented in `.env.example`.
+Register with `infrastructure/scripts/register-connectors.ps1`. Design: `docs/event-catalog/debezium-design.md`.

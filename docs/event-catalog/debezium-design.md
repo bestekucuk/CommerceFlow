@@ -44,7 +44,7 @@ sequenceDiagram
 | `plugin.name` | `pgoutput` | built into PostgreSQL |
 | `publication.autocreate.mode` | `disabled` | publication created by the database bootstrap, limited to `outbox` |
 | `snapshot.mode` | `no_data` | the outbox needs no initial snapshot |
-| `value.converter` | `ByteArrayConverter` | pass Avro bytes through unchanged |
+| `value.converter` | `io.debezium.converters.BinaryDataConverter` | pass Avro bytes through unchanged; Kafka 3.8 `ByteArrayConverter` fails on the `ByteBuffer` Debezium emits for `bytea` |
 | `transforms.outbox.route.by.field` | `topic` | per-row destination |
 | `transforms.outbox.table.field.event.key` | `aggregate_id` | ordering per aggregate |
 | `tombstones.on.delete` | `false` | cleanup deletes must not produce messages |

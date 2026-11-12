@@ -1,0 +1,7 @@
+# consumer_group,topics (expected subscriptions; group id = service name)
+inventory-service,cf.product.events.v1 cf.order.events.v1 cf.inventory.commands.v1
+notification-service,cf.customer.events.v1 cf.order.events.v1 cf.payment.events.v1 cf.shipment.events.v1
+order-service,cf.inventory.events.v1 cf.payment.events.v1 cf.shipment.events.v1
+payment-service,cf.order.events.v1 cf.payment.commands.v1
+pricing-service,cf.product.events.v1
+shipping-service,cf.order.events.v1

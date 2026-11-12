@@ -1,8 +1,345 @@
-# CommerceFlow local stack — PLACEHOLDER (CF-005).
+# CommerceFlow LOCAL infrastructure (single node, development only).
 #
-# No services are defined yet. Planned: Kafka (KRaft), Schema Registry, Kafka Connect
-# with Debezium, one PostgreSQL per service, Redis, Toxiproxy, OpenTelemetry Collector,
-# Prometheus, Grafana, Loki, Tempo. Component config lives under infrastructure/.
+# Start:   powershell -File infrastructure/scripts/up.ps1      (creates .env from .env.example)
+# Health:  powershell -File infrastructure/scripts/health.ps1
+# Docs:    infrastructure/README.md
+#
+# All host ports are bound to 127.0.0.1. Credentials come from .env (gitignored); see
+# .env.example. Application services are not part of this file yet.
 name: commerceflow
 
-services: {}
+x-restart: &restart
+  restart: unless-stopped
+
+services:
+  # ------------------------------------------------------------------ data
+  postgres:
+    <<: *restart
+    image: postgres:16.4-alpine
+    env_file:
+      # passwords for the init script; missing values make the init script stop with a message
+      - path: .env
+        required: false
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_SUPERUSER_PASSWORD:?copy .env.example to .env}
+      POSTGRES_DB: postgres
+    command:
+      - postgres
+      - -c
+      - wal_level=logical
+      - -c
+      - max_replication_slots=16
+      - -c
+      - max_wal_senders=16
+      - -c
+      - max_slot_wal_keep_size=2GB
+      - -c
+      - shared_preload_libraries=pg_stat_statements
+    ports: ["127.0.0.1:${CF_POSTGRES_HOST_PORT:-15432}:5432"]
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./infrastructure/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    <<: *restart
+    image: redis:7.4-alpine
+    environment:
+      PRODUCT_REDIS_PASSWORD: ${PRODUCT_REDIS_PASSWORD:?copy .env.example to .env}
+      PRICING_REDIS_PASSWORD: ${PRICING_REDIS_PASSWORD:?copy .env.example to .env}
+      MONITORING_REDIS_PASSWORD: ${MONITORING_REDIS_PASSWORD:?copy .env.example to .env}
+    entrypoint: ["/bin/sh", "/etc/commerceflow/start-redis.sh"]
+    ports: ["127.0.0.1:${CF_REDIS_HOST_PORT:-16379}:6379"]
+    volumes:
+      - ./infrastructure/redis/start-redis.sh:/etc/commerceflow/start-redis.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli --no-auth-warning --user monitoring --pass \"$$MONITORING_REDIS_PASSWORD\" ping | grep -q PONG"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  # ------------------------------------------------------------------ event streaming
+  kafka:
+    <<: *restart
+    image: apache/kafka:3.8.0
+    environment:
+      CLUSTER_ID: commerceflow-local-cluster1
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: INTERNAL://:29092,EXTERNAL://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:29092,EXTERNAL://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      # single broker: every replication setting must be 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 1
+      KAFKA_MIN_INSYNC_REPLICAS: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+    ports: ["127.0.0.1:9092:9092"]
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:29092 > /dev/null 2>&1"]
+      interval: 10s
+      timeout: 10s
+      retries: 20
+      start_period: 15s
+
+  kafka-init:
+    image: apache/kafka:3.8.0
+    depends_on:
+      kafka: { condition: service_healthy }
+    entrypoint: ["/bin/bash", "/etc/commerceflow/create-topics.sh"]
+    environment:
+      BOOTSTRAP: kafka:29092
+    volumes:
+      - ./infrastructure/kafka/create-topics.sh:/etc/commerceflow/create-topics.sh:ro
+      - ./infrastructure/kafka/topics.csv:/etc/commerceflow/topics.csv:ro
+    restart: "no"
+
+  schema-registry:
+    <<: *restart
+    image: confluentinc/cp-schema-registry:7.7.1
+    depends_on:
+      kafka: { condition: service_healthy }
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:29092
+      SCHEMA_REGISTRY_KAFKASTORE_TOPIC_REPLICATION_FACTOR: 1
+      SCHEMA_REGISTRY_SCHEMA_COMPATIBILITY_LEVEL: backward
+    ports: ["127.0.0.1:8090:8081"]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:8081/subjects > /dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+  connect:
+    <<: *restart
+    image: quay.io/debezium/connect:2.7.3.Final
+    depends_on:
+      kafka: { condition: service_healthy }
+      postgres: { condition: service_healthy }
+    environment:
+      BOOTSTRAP_SERVERS: kafka:29092
+      GROUP_ID: commerceflow-connect
+      CONFIG_STORAGE_TOPIC: _connect-configs
+      OFFSET_STORAGE_TOPIC: _connect-offsets
+      STATUS_STORAGE_TOPIC: _connect-status
+      CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      STATUS_STORAGE_REPLICATION_FACTOR: 1
+      KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+      VALUE_CONVERTER: org.apache.kafka.connect.converters.ByteArrayConverter
+      # connector JSON files reference ${env:<NAME>}; values never appear in the files
+      CONNECT_CONFIG_PROVIDERS: env
+      CONNECT_CONFIG_PROVIDERS_ENV_CLASS: org.apache.kafka.common.config.provider.EnvVarConfigProvider
+      # only the CDC roles' passwords are given to Connect
+      PRODUCT_DB_CDC_PASSWORD: ${PRODUCT_DB_CDC_PASSWORD:?copy .env.example to .env}
+      ORDER_DB_CDC_PASSWORD: ${ORDER_DB_CDC_PASSWORD:?copy .env.example to .env}
+      INVENTORY_DB_CDC_PASSWORD: ${INVENTORY_DB_CDC_PASSWORD:?copy .env.example to .env}
+      PAYMENT_DB_CDC_PASSWORD: ${PAYMENT_DB_CDC_PASSWORD:?copy .env.example to .env}
+      CUSTOMER_DB_CDC_PASSWORD: ${CUSTOMER_DB_CDC_PASSWORD:?copy .env.example to .env}
+      PRICING_DB_CDC_PASSWORD: ${PRICING_DB_CDC_PASSWORD:?copy .env.example to .env}
+      SHIPPING_DB_CDC_PASSWORD: ${SHIPPING_DB_CDC_PASSWORD:?copy .env.example to .env}
+    ports: ["127.0.0.1:8093:8083"]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:8083/connectors > /dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+
+  kafka-ui:
+    <<: *restart
+    image: provectuslabs/kafka-ui:v0.7.2
+    depends_on:
+      kafka: { condition: service_healthy }
+    environment:
+      KAFKA_CLUSTERS_0_NAME: commerceflow-local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schema-registry:8081
+      KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: debezium
+      KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://connect:8083
+    ports: ["127.0.0.1:8095:8080"]
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health | grep -q UP"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+
+  # ------------------------------------------------------------------ observability
+  otel-collector:
+    <<: *restart
+    image: otel/opentelemetry-collector-contrib:0.111.0
+    command: ["--config=/etc/otelcol/config.yaml"]
+    depends_on: [tempo, loki]
+    volumes:
+      - ./infrastructure/monitoring/otel-collector.yaml:/etc/otelcol/config.yaml:ro
+    ports:
+      - "127.0.0.1:4317:4317"
+      - "127.0.0.1:4318:4318"
+      - "127.0.0.1:13133:13133"
+
+  prometheus:
+    <<: *restart
+    image: prom/prometheus:v2.54.1
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=7d
+      - --web.enable-lifecycle
+    volumes:
+      - ./infrastructure/monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports: ["127.0.0.1:9090:9090"]
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:9090/-/ready > /dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+  grafana:
+    <<: *restart
+    image: grafana/grafana:11.2.2
+    depends_on: [prometheus, loki, tempo]
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?copy .env.example to .env}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
+    volumes:
+      - ./infrastructure/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./infrastructure/monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    ports: ["127.0.0.1:3000:3000"]
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api/health | grep -q ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+  loki:
+    <<: *restart
+    image: grafana/loki:3.2.0
+    command: ["-config.file=/etc/loki/config.yaml"]
+    volumes:
+      - ./infrastructure/monitoring/loki.yaml:/etc/loki/config.yaml:ro
+      - loki-data:/loki
+    ports: ["127.0.0.1:3100:3100"]
+
+  tempo:
+    <<: *restart
+    image: grafana/tempo:2.6.0
+    command: ["-config.file=/etc/tempo/config.yaml"]
+    volumes:
+      - ./infrastructure/monitoring/tempo.yaml:/etc/tempo/config.yaml:ro
+    ports: ["127.0.0.1:3200:3200"]
+
+  postgres-exporter:
+    <<: *restart
+    image: quay.io/prometheuscommunity/postgres-exporter:v0.15.0
+    depends_on:
+      postgres: { condition: service_healthy }
+    environment:
+      DATA_SOURCE_URI: postgres:5432/postgres?sslmode=disable
+      DATA_SOURCE_USER: monitoring
+      DATA_SOURCE_PASS: ${MONITORING_DB_PASSWORD:?copy .env.example to .env}
+      PG_EXPORTER_AUTO_DISCOVER_DATABASES: "true"
+      PG_EXPORTER_EXCLUDE_DATABASES: template0,template1
+
+  kafka-exporter:
+    <<: *restart
+    image: danielqsj/kafka-exporter:v1.8.0
+    depends_on:
+      kafka: { condition: service_healthy }
+    command: ["--kafka.server=kafka:29092"]
+
+  redis-exporter:
+    <<: *restart
+    image: oliver006/redis_exporter:v1.62.0
+    depends_on:
+      redis: { condition: service_healthy }
+    environment:
+      REDIS_ADDR: redis://redis:6379
+      REDIS_USER: monitoring
+      REDIS_PASSWORD: ${MONITORING_REDIS_PASSWORD:?copy .env.example to .env}
+
+  # ------------------------------------------------------------------ application services
+  # Profile "apps": docker compose --profile apps up -d --build product-service inventory-service
+  # Migrations are NOT run by the services: run infrastructure/scripts/migrate.ps1 first
+  # (migrator role), then register-connectors.ps1 for CDC.
+  product-service:
+    <<: *restart
+    profiles: [apps]
+    build:
+      context: ./services/product-service
+      additional_contexts:
+        contracts: ./contracts
+    image: commerceflow/product-service:dev
+    depends_on:
+      postgres: { condition: service_healthy }
+      schema-registry: { condition: service_healthy }
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/product_db
+      DB_USER: product_service
+      DB_PASSWORD: ${PRODUCT_DB_SERVICE_PASSWORD:?copy .env.example to .env}
+      FLYWAY_ENABLED: "false"
+      SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      SPRING_PROFILES_ACTIVE: json
+      OTEL_SERVICE_NAME: product-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+      OTEL_METRICS_EXPORTER: none
+      OTEL_LOGS_EXPORTER: none
+      OTEL_RESOURCE_ATTRIBUTES: deployment.environment=local
+    ports: ["127.0.0.1:8081:8081"]
+    healthcheck:
+      # the Temurin image's /bin/sh is dash (no /dev/tcp); curl is available
+      test: ["CMD-SHELL", "curl -fs http://localhost:8081/actuator/health/readiness | grep -q UP"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+
+  inventory-service:
+    <<: *restart
+    profiles: [apps]
+    build:
+      context: ./services/inventory-service
+      additional_contexts:
+        contracts: ./contracts
+    image: commerceflow/inventory-service:dev
+    depends_on:
+      postgres: { condition: service_healthy }
+      kafka: { condition: service_healthy }
+      schema-registry: { condition: service_healthy }
+    environment:
+      DATABASE_URL: postgres://inventory_service:${INVENTORY_DB_SERVICE_PASSWORD:?copy .env.example to .env}@postgres:5432/inventory_db?sslmode=disable
+      KAFKA_BROKERS: kafka:29092
+      SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      OTEL_SERVICE_NAME: inventory-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+      OTEL_EXPORTER_OTLP_INSECURE: "true"
+    ports: ["127.0.0.1:8083:8083"]
+
+volumes:
+  postgres-data:
+  kafka-data:
+  prometheus-data:
+  grafana-data:
+  loki-data:

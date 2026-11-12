@@ -1,7 +1,7 @@
 # infrastructure/redis
 
-Status: **empty scaffold**.
+Status: **implemented for local development** — see `infrastructure/README.md`.
 
-Will contain: Redis config for caches and read models (pricing lookups, catalog read model, storefront sessions).
-
-No secrets are committed; required variables are documented in `.env.example`.
+| File | Purpose |
+|---|---|
+| `start-redis.sh` | Builds the ACL file from environment variables and starts Redis (default user off, one user per owning service with key-prefix restriction, read-only monitoring user) |

@@ -1,0 +1,27 @@
+# name,partitions,retention_ms,kind
+# LOCAL values (single broker, replication factor 1). Production values are set per
+# environment (docs/event-catalog/kafka-topic-strategy.md); partition counts are not targets.
+cf.product.events.v1,3,604800000,events
+cf.price.events.v1,3,604800000,events
+cf.customer.events.v1,3,604800000,events
+cf.order.events.v1,3,1209600000,events
+cf.inventory.events.v1,3,604800000,events
+cf.payment.events.v1,3,604800000,events
+cf.shipment.events.v1,3,604800000,events
+cf.inventory.commands.v1,3,259200000,commands
+cf.payment.commands.v1,3,259200000,commands
+cf.product.events.v1.pricing-service.dlt,1,2592000000,dlt
+cf.product.events.v1.inventory-service.dlt,1,2592000000,dlt
+cf.customer.events.v1.notification-service.dlt,1,2592000000,dlt
+cf.order.events.v1.inventory-service.dlt,1,2592000000,dlt
+cf.order.events.v1.payment-service.dlt,1,2592000000,dlt
+cf.order.events.v1.shipping-service.dlt,1,2592000000,dlt
+cf.order.events.v1.notification-service.dlt,1,2592000000,dlt
+cf.inventory.events.v1.order-service.dlt,1,2592000000,dlt
+cf.payment.events.v1.order-service.dlt,1,2592000000,dlt
+cf.payment.events.v1.notification-service.dlt,1,2592000000,dlt
+cf.shipment.events.v1.order-service.dlt,1,2592000000,dlt
+cf.shipment.events.v1.notification-service.dlt,1,2592000000,dlt
+cf.inventory.commands.v1.inventory-service.dlt,1,2592000000,dlt
+cf.payment.commands.v1.payment-service.dlt,1,2592000000,dlt
+cf.cdc-check.v1,1,3600000,local-check

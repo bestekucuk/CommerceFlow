@@ -89,7 +89,7 @@ Connector: see `reference/outbox-connector.json` in this skill folder. Key setti
 | `transforms.outbox.route.topic.replacement` | `${routedByValue}` | topic column holds the full name |
 | `transforms.outbox.table.field.event.key` | `aggregate_id` | per-aggregate ordering |
 | `transforms.outbox.table.fields.additional.placement` | `type:header:eventType,trace_parent:header:traceparent` | headers for consumers and tracing |
-| `value.converter` | `org.apache.kafka.connect.converters.ByteArrayConverter` | pass Avro bytes through untouched |
+| `value.converter` | `io.debezium.converters.BinaryDataConverter` | pass Avro bytes through untouched (Kafka's `ByteArrayConverter` rejects the `ByteBuffer` Debezium produces for `bytea` — verified failure) |
 | `heartbeat.interval.ms` + `heartbeat.action.query` | `10000` + upsert into `debezium_heartbeat` | keep slot advancing |
 
 Slot lag monitoring query:

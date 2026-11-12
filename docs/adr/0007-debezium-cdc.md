@@ -18,7 +18,7 @@ operating its own relay.
   replication slot).
 - The Outbox Event Router SMT routes each row to the topic in its `topic` column, uses
   `aggregate_id` as the Kafka key and maps `id`, `type` and `trace_parent` to headers.
-- Payload bytes are passed through unchanged (byte-array converter), so Kafka carries
+- Payload bytes are passed through unchanged (`io.debezium.converters.BinaryDataConverter`), so Kafka carries
   exactly the Avro produced by the service.
 - Connector configuration is declarative in `infrastructure/debezium/<short>-outbox.json`.
 

@@ -1,7 +1,5 @@
 # infrastructure/docker
 
-Status: **empty scaffold**.
+Status: **reserved** — see `infrastructure/README.md`.
 
-Will contain: Shared Dockerfile conventions and base-image notes; Compose overrides (`docker-compose.override.example.yml`). Each service's own Dockerfile stays in its folder.
-
-No secrets are committed; required variables are documented in `.env.example`.
+The local stack is defined in the root `docker-compose.yml`; service Dockerfiles live in each service folder. This folder is reserved for Compose overrides (e.g. adding application services, Toxiproxy).

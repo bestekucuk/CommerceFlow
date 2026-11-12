@@ -1,7 +1,11 @@
 # infrastructure/kafka
 
-Status: **empty scaffold**.
+Status: **implemented for local development** — see `infrastructure/README.md`.
 
-Will contain: Broker (KRaft) and Schema Registry config; topic definitions (`cf.<aggregate>.events.v1`, `.commands.v1`, DLTs) with partitions and retention.
+| File | Purpose |
+|---|---|
+| `topics.csv` | Declared topics: name, partitions, retention, kind (events, commands, dlt, local-check) |
+| `consumer-groups.csv` | Expected consumer groups (= service names) and their topics |
+| `create-topics.sh` | Idempotent topic creation/retention update, run by the `kafka-init` container |
 
-No secrets are committed; required variables are documented in `.env.example`.
+Single broker, replication factor 1, auto topic creation disabled.

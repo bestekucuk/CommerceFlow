@@ -1,0 +1,64 @@
+# Prometheus for the local stack. Application services are added here when they join
+# docker-compose.yml (they expose /actuator/prometheus or /metrics).
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    environment: local
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  - job_name: otel-collector
+    static_configs:
+      - targets: ["otel-collector:8888"]
+        labels: { component: otel-collector }
+
+  - job_name: otel-collector-exported
+    honor_labels: true
+    static_configs:
+      - targets: ["otel-collector:8889"]
+
+  - job_name: postgres
+    static_configs:
+      - targets: ["postgres-exporter:9187"]
+        labels: { component: postgres }
+
+  - job_name: kafka
+    static_configs:
+      - targets: ["kafka-exporter:9308"]
+        labels: { component: kafka }
+
+  - job_name: redis
+    static_configs:
+      - targets: ["redis-exporter:9121"]
+        labels: { component: redis }
+
+  - job_name: loki
+    static_configs:
+      - targets: ["loki:3100"]
+        labels: { component: loki }
+
+  - job_name: tempo
+    static_configs:
+      - targets: ["tempo:3200"]
+        labels: { component: tempo }
+
+  - job_name: grafana
+    static_configs:
+      - targets: ["grafana:3000"]
+        labels: { component: grafana }
+
+  # Application services (profile "apps"); down while they are not running.
+  - job_name: app-product-service
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["product-service:8081"]
+        labels: { component: product-service }
+
+  - job_name: app-inventory-service
+    static_configs:
+      - targets: ["inventory-service:8083"]
+        labels: { component: inventory-service }
