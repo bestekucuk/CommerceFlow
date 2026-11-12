@@ -32,7 +32,7 @@ internal/domain/               entities, value objects, events, repository inter
 internal/application/          use cases + port interfaces
 internal/infrastructure/       config, logging, postgres (pgx), later kafka, outbox, inbox
 internal/transport/http/       HTTP handlers (health, readiness, later API)
-migrations/                    golang-migrate SQL (000001 = outbox + inbox)
+migrations/                    golang-migrate SQL (000001 = outbox + inbox, 000002 = product_projection + stock_item)
 tests/integration/             Testcontainers tests (build tag "integration")
 go.mod, Makefile               own module and build (no go.work, no replace to siblings)
 Dockerfile
@@ -54,4 +54,11 @@ what the skills call `adapters`.
 
 ## Status
 
-Buildable scaffold — health/readiness, graceful shutdown, migrations baseline, tests. No business logic yet.
+Implemented: ProductCreated consumer (franz-go, group `inventory-service`) — validation,
+inbox dedupe in the same transaction as the stock items, capped-backoff retries for
+transient failures, DLT `cf.product.events.v1.inventory-service.dlt` for permanent ones,
+offset commit after the DB transaction, graceful shutdown; `GET /v1/stock/{sku}`;
+`/metrics` (processed/duplicate/skipped/dlt, durations, retries); OTel consumer spans
+continuing the producer trace. Tests: unit + Testcontainers (Kafka + PostgreSQL):
+processing, duplicates, poison message, transient retries, restart from committed offsets.
+Not yet: reservations (CF-048), other consumed events.

@@ -19,7 +19,7 @@ func TestLoad(t *testing.T) {
 	}{
 		{
 			name: "defaults",
-			env:  map[string]string{"DATABASE_URL": "postgres://localhost/db"},
+			env:  map[string]string{"DATABASE_URL": "postgres://localhost/db", "KAFKA_BROKERS": "k:9092", "SCHEMA_REGISTRY_URL": "http://sr"},
 			check: func(t *testing.T, c Config) {
 				if c.HTTPAddr != ":9999" || c.ShutdownTimeout != 20*time.Second || c.LogLevel != slog.LevelInfo {
 					t.Fatalf("unexpected defaults: %+v", c)
@@ -28,15 +28,16 @@ func TestLoad(t *testing.T) {
 		},
 		{
 			name: "overrides",
-			env:  map[string]string{"DATABASE_URL": "x", "HTTP_ADDR": ":1", "SHUTDOWN_TIMEOUT": "5s", "LOG_LEVEL": "debug"},
+			env:  map[string]string{"DATABASE_URL": "x", "KAFKA_BROKERS": "a:1, b:2", "SCHEMA_REGISTRY_URL": "http://sr", "HTTP_ADDR": ":1", "SHUTDOWN_TIMEOUT": "5s", "LOG_LEVEL": "debug"},
 			check: func(t *testing.T, c Config) {
-				if c.HTTPAddr != ":1" || c.ShutdownTimeout != 5*time.Second || c.LogLevel != slog.LevelDebug {
+				if c.HTTPAddr != ":1" || c.ShutdownTimeout != 5*time.Second || c.LogLevel != slog.LevelDebug || len(c.KafkaBrokers) != 2 || c.KafkaBrokers[1] != "b:2" {
 					t.Fatalf("overrides not applied: %+v", c)
 				}
 			},
 		},
 		{name: "missing database url", env: map[string]string{}, wantErr: true},
-		{name: "invalid timeout", env: map[string]string{"DATABASE_URL": "x", "SHUTDOWN_TIMEOUT": "soon"}, wantErr: true},
+		{name: "invalid timeout", env: map[string]string{"DATABASE_URL": "x", "KAFKA_BROKERS": "k:1", "SCHEMA_REGISTRY_URL": "http://sr", "SHUTDOWN_TIMEOUT": "soon"}, wantErr: true},
+		{name: "missing kafka", env: map[string]string{"DATABASE_URL": "x", "SCHEMA_REGISTRY_URL": "http://sr"}, wantErr: true},
 		{name: "invalid log level", env: map[string]string{"DATABASE_URL": "x", "LOG_LEVEL": "loud"}, wantErr: true},
 	}
 	for _, tt := range tests {

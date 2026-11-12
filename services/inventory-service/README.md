@@ -4,10 +4,8 @@ Inventory bounded context of CommerceFlow. Stock levels per SKU and location, re
 
 ## Status
 
-**Buildable scaffold.** Go service with structured logging, configuration from the
-environment, a lazy pgx pool, `/healthz` and `/readyz`, graceful shutdown, a migration
-baseline (outbox, inbox), unit tests and a Testcontainers
-integration test. No business logic or Kafka integration yet.
+ProductCreated consumer and stock read API implemented (see `CLAUDE.md` for scope).
+Reservations and the other consumed events are not implemented yet.
 
 ## Stack
 
@@ -25,15 +23,24 @@ from the repo root, which runs Go in Docker):
 | Unit tests | `make test` |
 | Integration tests (Docker) | `make integration` |
 | Build | `make build` |
-| Run | `DATABASE_URL=postgres://user:pass@localhost:5432/inventory_db go run ./cmd/inventory-service` |
+| Run | `DATABASE_URL=postgres://user:pass@localhost:15432/inventory_db go run ./cmd/inventory-service` |
 | Image | from the repo root: `powershell -File scripts/build-service.ps1 inventory-service -Image` |
 
 | Endpoint | Purpose |
 |---|---|
 | `GET /healthz` | liveness (process is running) |
-| `GET /readyz` | readiness (database reachable) |
+| `GET /readyz` | readiness (database reachable and consumer not stuck retrying) |
+| `GET /metrics` | Prometheus metrics |
+| `GET /v1/stock/{sku}` | stock item read |
 
-Configuration: `HTTP_ADDR` (default `:8083`), `DATABASE_URL` (required),
+Readiness choice: while the consumer is retrying a transient failure (for example the database
+is unreachable), `/readyz` reports DOWN, so the pod is taken out of HTTP load balancing but
+not restarted (`/healthz` stays UP). The partition is not skipped: ordering and the inbox
+guarantee are kept, and processing resumes when the dependency recovers. Retries are visible
+as `commerceflow_message_retries_total`; an alert rule is planned (CF-079).
+
+Configuration: `HTTP_ADDR` (default `:8083`), `DATABASE_URL`, `KAFKA_BROKERS`, `SCHEMA_REGISTRY_URL` (required),
+`OTEL_EXPORTER_OTLP_ENDPOINT` (optional),
 `SHUTDOWN_TIMEOUT` (default `20s`), `LOG_LEVEL` (`debug|info|warn|error`).
 
 Migrations: `migrations/` (golang-migrate format); applied by a migration job, not by the

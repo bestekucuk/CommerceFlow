@@ -1,14 +1,14 @@
 # Event catalogue (detailed)
 
-Status: **planned**. These are the agreed definitions for the first Avro schemas (CF-002).
-No `.avsc` file, topic or producer exists yet. The summary table used by tooling is in
-[README.md](README.md).
+Status: **ProductCreated v1 implemented** (schema in `contracts/events/product/`, produced
+by product-service, consumed by inventory-service); all other events are **planned**
+definitions for CF-002. The summary table used by tooling is in [README.md](README.md).
 
 ## 1. Rules that apply to every event
 
 | Aspect | Rule |
 |---|---|
-| Envelope | Every record has `metadata: EventMetadata` (`eventId` uuid, `eventType`, `aggregateId`, `occurredAt` timestamp-millis, `correlationId`, `causationId` nullable, `producer`) — `contracts/events/README.md` |
+| Envelope | Every record has `metadata: EventMetadata` (`eventId` uuid, `eventType`, `aggregateType`, `aggregateId`, `occurredAt` timestamp-millis, `schemaVersion` int, `correlationId`, `causationId` nullable, `producer`) and the event data in a `payload` record — `contracts/events/common/EventMetadata.v1.avsc` |
 | Money | `Money { amountMinor: long, currency: string (ISO 4217) }` |
 | Encoding | Avro, Confluent wire format, subject `TopicRecordNameStrategy`, compatibility `BACKWARD` |
 | Publishing | Written to the producer's `outbox` in the business transaction; relayed by Debezium ([outbox-design.md](outbox-design.md), [debezium-design.md](debezium-design.md)) |
@@ -19,7 +19,7 @@ No `.avsc` file, topic or producer exists yet. The summary table used by tooling
 | Failure handling (default) | Transient errors: bounded blocking retries with backoff. Permanent errors (deserialization, validation, unknown required data): `<topic>.<consumer>.dlt` with diagnostic headers, alert, fix, replay ([retry-and-dlq-strategy.md](retry-and-dlq-strategy.md)) |
 | Version | All events start at **v1** (file `<Event>.v1.avsc`, topic suffix `.v1`) |
 
-Schemas below list payload fields after `metadata`. `?` = optional (union with null,
+Schemas below list the fields of `payload`. `?` = optional (union with null,
 default null). Types: `uuid` = string with logicalType uuid; `ts` = long
 timestamp-millis.
 
@@ -29,21 +29,24 @@ timestamp-millis.
 
 | Aspect | Value |
 |---|---|
-| Producer | product-service |
-| Consumers | pricing-service (register SKUs for pricing), inventory-service (create stock items with zero stock), catalog read model (owner open, CF-015) |
+| Status | **Implemented** — schema `contracts/events/product/ProductCreated.v1.avsc`; producer and inventory consumer built and tested (CF-043/044/046) |
+| Producer | product-service (`POST /v1/products`, outbox in the same transaction) |
+| Consumers | inventory-service (creates stock items with zero stock) — implemented; pricing-service (register SKUs for pricing) and catalog read model (owner open, CF-015) — planned |
 | Topic | `cf.product.events.v1` |
+| Subject | `cf.product.events.v1-com.commerceflow.events.product.ProductCreated` (BACKWARD) |
 | Aggregate key | `productId` |
-| Version | v1 |
+| Version | v1 (`metadata.schemaVersion = 1`) |
 | Delivery | at-least-once, ordered per product |
-| Idempotency | inbox; natural: insert projection `ON CONFLICT (product_id) DO NOTHING` |
-| Failure handling | default; a consumer missing a referenced category is not an error (IDs only) |
+| Idempotency | inbox `(eventId, inventory-service.product-created)`; natural: projection and stock items `ON CONFLICT DO NOTHING` |
+| Validation (inventory) | `eventType`, `schemaVersion`, header `id` = `metadata.eventId`, key = `aggregateId` = `productId`, at least one SKU, SKU format |
+| Failure handling | undecodable or invalid → `cf.product.events.v1.inventory-service.dlt`; database/registry errors → retried with capped backoff, never skipped; other event types on the topic are acknowledged and skipped |
 
 ```text
 productId: uuid
-skus: array<record Sku { sku: string, name: string }>
 name: string
 categoryId: uuid?
 status: enum ProductStatus { DRAFT, ACTIVE, UNKNOWN } default UNKNOWN
+skus: array<record ProductSku { sku: string, name: string }>
 ```
 
 ### 2.2 ProductUpdated

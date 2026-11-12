@@ -5,6 +5,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.6"
     kotlin("jvm") version "2.0.21"
     kotlin("plugin.spring") version "2.0.21"
+    id("com.github.davidmc24.gradle.plugin.avro") version "1.9.1"
 }
 
 group = "com.commerceflow"
@@ -25,9 +26,32 @@ kotlin {
 
 repositories {
     mavenCentral()
+    maven("https://packages.confluent.io/maven/")
+}
+
+// Event contracts are generated from contracts/events (CF-003). Override with
+// -PcontractsDir=/contracts inside Docker builds. Generated code stays in build/.
+val contractsDir = providers.gradleProperty("contractsDir").orElse("../../contracts").get()
+
+avro {
+    stringType.set("String")
+}
+
+tasks.named<com.github.davidmc24.gradle.plugin.avro.GenerateAvroJavaTask>("generateAvroJava") {
+    // only the contracts this service produces; common types first so references resolve
+    setSource(files("$contractsDir/events/common", "$contractsDir/events/product"))
+}
+
+// Kotlin must see the generated Java classes (javac still compiles them).
+kotlin.sourceSets.named("main") {
+    kotlin.srcDir(tasks.named("generateAvroJava"))
 }
 
 dependencies {
+    implementation("org.apache.avro:avro:1.11.4")
+    implementation("io.confluent:kafka-avro-serializer:7.7.1")
+    implementation("io.opentelemetry:opentelemetry-api:1.43.0")
+    implementation("net.logstash.logback:logstash-logback-encoder:8.0")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")

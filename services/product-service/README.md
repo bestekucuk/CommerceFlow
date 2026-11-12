@@ -4,9 +4,8 @@ Catalog bounded context of CommerceFlow. Products, SKUs, categories, attributes 
 
 ## Status
 
-**Buildable scaffold.** Spring Boot application with health/readiness probes, Flyway
-baseline (outbox), architecture test and a Testcontainers
-health test. No business logic, API endpoints or Kafka integration yet.
+Product creation implemented end to end through the outbox (see `CLAUDE.md` for scope).
+Update/discontinue and authentication are not implemented yet.
 
 ## Stack
 
@@ -21,7 +20,7 @@ From this folder (Windows: `gradlew.bat`):
 |---|---|
 | Build + unit tests | `./gradlew build` |
 | Integration tests (Docker) | `./gradlew integrationTest` |
-| Run | `DB_URL=jdbc:postgresql://localhost:5432/product_db DB_USER=... DB_PASSWORD=... ./gradlew bootRun` |
+| Run | `DB_URL=jdbc:postgresql://localhost:15432/product_db DB_USER=... DB_PASSWORD=... ./gradlew bootRun` |
 | Image | from the repo root: `powershell -File scripts/build-service.ps1 product-service -Image` |
 
 | Endpoint | Purpose |

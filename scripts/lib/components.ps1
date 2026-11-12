@@ -42,9 +42,11 @@ function Invoke-Go([pscustomobject]$c, [string]$command) {
         return
     }
     if (-not (Get-Command docker -ErrorAction SilentlyContinue)) { Write-Host 'Neither Go nor Docker is available.'; $global:LASTEXITCODE = 127; return }
+    # The repository root is mounted (read-only for everything but the service is not
+    # enforced) so tests can read contracts/; the build itself only uses the service folder.
     # Testcontainers inside the container talks to the host Docker engine.
-    $mount = ($c.Path -replace '\\', '/')
-    $dockerArgs = @('run', '--rm', '-v', "${mount}:/src", '-w', '/src',
+    $mount = ($script:RepoRoot -replace '\\', '/')
+    $dockerArgs = @('run', '--rm', '-v', "${mount}:/repo", '-w', "/repo/$($c.Rel)",
         '-v', 'commerceflow-go-mod:/go/pkg/mod', '-v', 'commerceflow-go-build:/root/.cache/go-build',
         '-v', '/var/run/docker.sock:/var/run/docker.sock',
         '-e', 'TESTCONTAINERS_HOST_OVERRIDE=host.docker.internal',

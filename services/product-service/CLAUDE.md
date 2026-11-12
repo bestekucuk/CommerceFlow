@@ -34,7 +34,7 @@ src/main/kotlin/com/commerceflow/catalog/
   infrastructure/  persistence, outbox writer, Kafka, HTTP clients, Spring config
   presentation/    REST controllers, DTOs, problem details
 src/main/resources/application.yml
-src/main/resources/db/migration/   Flyway (V1 = outbox)
+src/main/resources/db/migration/   Flyway (V1 = outbox, V2 = product, product_sku)
 src/test/kotlin/com/commerceflow/catalog/
   ArchitectureTest.kt      layer and cross-service rules (unit)
   ApplicationHealthIT.kt   Testcontainers, tag "integration"
@@ -58,4 +58,8 @@ Build: `./gradlew build` (unit), `./gradlew integrationTest` (Docker). Follow th
 
 ## Status
 
-Buildable scaffold — health/readiness, Flyway baseline, tests. No business logic yet.
+Implemented: product creation (`POST/GET /v1/products`, contract `contracts/openapi/product-service.v1.yaml`),
+JDBC persistence (Flyway V2), ProductCreated through the transactional outbox (Avro, registered
+schema), correlation id filter, JSON logs and OTel Java agent in the image. Tests: domain,
+use case, ArchUnit (unit) and API, outbox atomicity, transaction rollback (Testcontainers).
+Not yet: update/discontinue, authentication (CF-068).

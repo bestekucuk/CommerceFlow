@@ -1,7 +1,7 @@
 # Event Catalog — index
 
-Status: **planned**. No schema files exist in `contracts/events/` yet; nothing is
-produced or consumed today.
+Status: **ProductCreated v1 implemented** (product-service → inventory-service); every other
+event below is **planned**.
 
 This folder holds the event architecture. The table below is the **machine-readable
 summary** (parsed by `scripts/affected-components.ps1`; keep the column order). Full

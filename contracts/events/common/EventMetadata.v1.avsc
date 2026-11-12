@@ -1,0 +1,17 @@
+{
+  "type": "record",
+  "name": "EventMetadata",
+  "namespace": "com.commerceflow.events.common",
+  "doc": "Envelope carried by every CommerceFlow event and command (docs/event-catalog/event-catalog.md).",
+  "fields": [
+    { "name": "eventId", "type": { "type": "string", "logicalType": "uuid" }, "doc": "Unique message id; equals the Kafka 'id' header and the consumers' inbox key." },
+    { "name": "eventType", "type": "string", "doc": "Message name, e.g. ProductCreated." },
+    { "name": "aggregateType", "type": "string", "doc": "Aggregate family, e.g. product." },
+    { "name": "aggregateId", "type": "string", "doc": "Aggregate id; equals the Kafka key." },
+    { "name": "occurredAt", "type": { "type": "long", "logicalType": "timestamp-millis" }, "doc": "When the fact happened (UTC)." },
+    { "name": "schemaVersion", "type": "int", "doc": "Major version of the event schema (matches the .v<N> file and topic suffix)." },
+    { "name": "correlationId", "type": "string", "doc": "Ties together all messages caused by one request or saga." },
+    { "name": "causationId", "type": ["null", "string"], "default": null, "doc": "eventId of the message that caused this one; null for messages caused by an API request." },
+    { "name": "producer", "type": "string", "doc": "Producing service, e.g. product-service." }
+  ]
+}

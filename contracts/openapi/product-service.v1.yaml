@@ -1,0 +1,124 @@
+openapi: 3.1.0
+info:
+  title: product-service
+  version: 1.0.0
+  description: |
+    Catalog API. Creating a product writes the product and a ProductCreated outbox row in
+    one transaction; Debezium publishes the event to cf.product.events.v1.
+    Authentication is not enforced yet (CF-068).
+# Explicitly no authentication yet: JWT resource-server security arrives with CF-068.
+security: []
+servers:
+  - url: http://localhost:8081
+    description: local Compose stack
+paths:
+  /v1/products:
+    post:
+      operationId: createProduct
+      summary: Create a product (status DRAFT) with at least one SKU
+      parameters:
+        - $ref: "#/components/parameters/CorrelationId"
+        - $ref: "#/components/parameters/Traceparent"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateProductRequest" }
+            example:
+              name: Trail Shoe
+              description: Lightweight trail running shoe
+              skus:
+                - { sku: SHOE-42, name: Size 42 }
+      responses:
+        "201":
+          description: Created
+          headers:
+            Location: { schema: { type: string }, description: "/v1/products/{id}" }
+            X-Correlation-Id: { $ref: "#/components/headers/CorrelationId" }
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Product" }
+        "400": { $ref: "#/components/responses/Problem" }
+        "409": { $ref: "#/components/responses/Problem" }
+        "422": { $ref: "#/components/responses/Problem" }
+  /v1/products/{id}:
+    get:
+      operationId: getProduct
+      summary: Get a product by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+        - $ref: "#/components/parameters/CorrelationId"
+      responses:
+        "200":
+          description: The product
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Product" }
+        "404": { $ref: "#/components/responses/Problem" }
+components:
+  parameters:
+    CorrelationId:
+      name: X-Correlation-Id
+      in: header
+      required: false
+      description: Client correlation id (1-64 of A-Z a-z 0-9 . _ -). Generated when absent; copied into event metadata.
+      schema: { type: string, pattern: "^[A-Za-z0-9._-]{1,64}$" }
+    Traceparent:
+      name: traceparent
+      in: header
+      required: false
+      description: W3C trace context; the trace continues through the outbox and Kafka.
+      schema: { type: string }
+  headers:
+    CorrelationId:
+      schema: { type: string }
+  responses:
+    Problem:
+      description: RFC 9457 problem details (invalid-request 400, duplicate-sku 409, invalid-product 422, not-found 404)
+      content:
+        application/problem+json:
+          schema: { $ref: "#/components/schemas/Problem" }
+  schemas:
+    CreateProductRequest:
+      type: object
+      required: [name, skus]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 200 }
+        description: { type: [string, "null"], maxLength: 4000 }
+        categoryId: { type: [string, "null"], format: uuid }
+        skus:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items: { $ref: "#/components/schemas/Sku" }
+    Sku:
+      type: object
+      required: [sku, name]
+      properties:
+        sku: { type: string, pattern: "^[A-Z0-9][A-Z0-9-]{2,39}$", description: Unique across all products }
+        name: { type: string, minLength: 1, maxLength: 200 }
+    Product:
+      type: object
+      required: [id, name, status, skus, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        description: { type: [string, "null"] }
+        categoryId: { type: [string, "null"], format: uuid }
+        status: { type: string, enum: [DRAFT, ACTIVE] }
+        skus:
+          type: array
+          items: { $ref: "#/components/schemas/Sku" }
+        createdAt: { type: string, format: date-time }
+    Problem:
+      type: object
+      properties:
+        type: { type: string, format: uri }
+        title: { type: string }
+        status: { type: integer }
+        detail: { type: [string, "null"] }
+        instance: { type: string }
+        correlationId: { type: string }

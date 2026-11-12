@@ -1,0 +1,39 @@
+{
+  "type": "record",
+  "name": "ProductCreated",
+  "namespace": "com.commerceflow.events.product",
+  "doc": "A product was created in the catalog. Topic cf.product.events.v1, key = productId.",
+  "fields": [
+    { "name": "metadata", "type": "com.commerceflow.events.common.EventMetadata" },
+    {
+      "name": "payload",
+      "type": {
+        "type": "record",
+        "name": "ProductCreatedPayload",
+        "fields": [
+          { "name": "productId", "type": { "type": "string", "logicalType": "uuid" } },
+          { "name": "name", "type": "string" },
+          { "name": "categoryId", "type": ["null", { "type": "string", "logicalType": "uuid" }], "default": null },
+          {
+            "name": "status",
+            "type": { "type": "enum", "name": "ProductStatus", "symbols": ["DRAFT", "ACTIVE", "UNKNOWN"], "default": "UNKNOWN" }
+          },
+          {
+            "name": "skus",
+            "type": {
+              "type": "array",
+              "items": {
+                "type": "record",
+                "name": "ProductSku",
+                "fields": [
+                  { "name": "sku", "type": "string" },
+                  { "name": "name", "type": "string" }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
