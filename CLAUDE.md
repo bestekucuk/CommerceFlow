@@ -16,7 +16,8 @@ is shared, the services are not.
 | `docs/` | architecture, adr, event-catalog, runbooks |
 | `backlog/BACKLOG.md` | Engineering backlog (IDs `CF-nnn`) |
 | `scripts/` | Repository-level helper scripts |
-| `docker-compose.yml` | Local stack (placeholder until CF-005) |
+| `docker-compose.yml` | Local infrastructure stack (`infrastructure/README.md`); application services not wired yet |
+| `docs/service-catalog.md` | Build, test, run and image commands per component |
 
 Every service and app folder has its own `CLAUDE.md`. Read it before changing that folder.
 
@@ -85,7 +86,8 @@ checks and test reminders. Test them with
   this (deny) and asks before local irreversible commands.
 - Read a file before overwriting it.
 - Do not claim something works unless it was built and tested in this session. Every
-  service and app is still a documentation-only scaffold.
+  service and app is a buildable scaffold (health endpoints, tests, Dockerfile) with no
+  business logic yet — see `docs/service-catalog.md`.
 
 ## Engineering principles
 

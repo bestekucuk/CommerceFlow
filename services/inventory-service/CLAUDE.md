@@ -20,24 +20,27 @@ this service reads no other service's database.
 
 ## Messaging
 
-- Publishes (through the transactional outbox + Debezium): InventoryReserved, InventoryReservationFailed, InventoryReleased, StockLevelChanged
-- Consumes (through the inbox, idempotently): Commands ReserveInventory, ReleaseInventory; ProductCreated, ProductDiscontinued, OrderCancelled
+- Publishes (through the transactional outbox + Debezium): StockReserved, StockReservationFailed, StockReleased, StockLevelChanged
+- Consumes (through the inbox, idempotently): Commands ReserveInventory, ReleaseInventory; ProductCreated, ProductDiscontinued, OrderConfirmed, OrderCancelled
 - Never define event schemas here; change `contracts/events/` instead.
 
-## Planned layout (Clean Architecture)
+## Layout (Clean Architecture)
 
 ```
-cmd/inventory-service/main.go
-internal/domain/        entities, value objects, events, repository interfaces
-internal/application/   use cases
-internal/adapters/      http, kafka (consumer + inbox), postgres (repositories + outbox), redis
-internal/platform/      config, logging (slog), telemetry (OpenTelemetry)
-migrations/             SQL migrations (outbox, inbox, domain tables)
-go.mod, Makefile        own module and build
+cmd/inventory-service/main.go             composition root: config, logger, pool, HTTP server, graceful shutdown
+internal/domain/               entities, value objects, events, repository interfaces (stdlib only)
+internal/application/          use cases + port interfaces
+internal/infrastructure/       config, logging, postgres (pgx), later kafka, outbox, inbox
+internal/transport/http/       HTTP handlers (health, readiness, later API)
+migrations/                    golang-migrate SQL (000001 = outbox + inbox)
+tests/integration/             Testcontainers tests (build tag "integration")
+go.mod, Makefile               own module and build (no go.work, no replace to siblings)
 Dockerfile
 ```
 
-Follow the `golang-development` and `clean-architecture` skills when creating it.
+Build: `make lint test build`; integration: `make integration`. Follow the
+`golang-development` and `clean-architecture` skills; `infrastructure`/`transport` here are
+what the skills call `adapters`.
 
 ## Rules
 
@@ -51,4 +54,4 @@ Follow the `golang-development` and `clean-architecture` skills when creating it
 
 ## Status
 
-Scaffold only — no code yet.
+Buildable scaffold — health/readiness, graceful shutdown, migrations baseline, tests. No business logic yet.

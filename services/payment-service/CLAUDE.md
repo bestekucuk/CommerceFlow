@@ -20,26 +20,31 @@ this service reads no other service's database.
 
 ## Messaging
 
-- Publishes (through the transactional outbox + Debezium): PaymentAuthorized, PaymentFailed, PaymentRefunded
+- Publishes (through the transactional outbox + Debezium): PaymentAuthorized, PaymentFailed, PaymentVoided, PaymentRefunded
 - Consumes (through the inbox, idempotently): Commands AuthorizePayment, VoidPayment; OrderCancelled
 - Never define event schemas here; change `contracts/events/` instead.
 
-## Planned layout (Clean Architecture)
+## Layout (Clean Architecture)
 
 ```
 src/main/kotlin/com/commerceflow/payments/
+  PaymentServiceApplication.kt   Spring Boot entry point
   domain/          aggregates, value objects, domain events, repository ports (no Spring)
-  application/     use cases, inbound and outbound ports
-  adapters/in/     web (REST), messaging (Kafka listeners + inbox)
-  adapters/out/    persistence, outbox writer, HTTP clients
-  config/          Spring wiring only
-src/main/resources/db/migration/   Flyway migrations (outbox, inbox, domain tables)
-src/test/kotlin/com/commerceflow/payments/   JUnit 5 unit tests, Testcontainers integration tests
+  application/     use cases and ports; transaction boundaries
+  infrastructure/  persistence, outbox writer, Kafka, HTTP clients, Spring config
+  presentation/    REST controllers, DTOs, problem details
+src/main/resources/application.yml
+src/main/resources/db/migration/   Flyway (V1 = outbox, inbox)
+src/test/kotlin/com/commerceflow/payments/
+  ArchitectureTest.kt      layer and cross-service rules (unit)
+  ApplicationHealthIT.kt   Testcontainers, tag "integration"
 build.gradle.kts, settings.gradle.kts, gradlew   own Gradle build (not part of any root build)
 Dockerfile
 ```
 
-Follow the `kotlin-springboot` and `clean-architecture` skills when creating it.
+Build: `./gradlew build` (unit), `./gradlew integrationTest` (Docker). Follow the
+`kotlin-springboot` and `clean-architecture` skills; package names here use
+`infrastructure`/`presentation` for what the skills call `adapters/out`/`adapters/in`.
 
 ## Rules
 
@@ -53,4 +58,4 @@ Follow the `kotlin-springboot` and `clean-architecture` skills when creating it.
 
 ## Status
 
-Scaffold only — no code yet.
+Buildable scaffold — health/readiness, Flyway baseline, tests. No business logic yet.
