@@ -49,3 +49,6 @@ infrastructure/kubernetes/**/charts/*.tgz
 
 # k6
 tests/performance/results/
+
+# Claude Code hook state (per session)
+.claude/hooks/.state/

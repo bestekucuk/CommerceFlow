@@ -45,7 +45,7 @@ code.
 
 ## Execution workflow
 
-1. Collect the diff and map files to components (as `/affected` does).
+1. Collect the diff and map files to components (`powershell -File scripts/affected-components.ps1 <base>`).
 2. **Boundary check:** does the diff touch more than one service/app? If so, is there an
    explicit cross-service plan? Any cross-service import, shared library, or access to
    another service's database is a blocking finding.

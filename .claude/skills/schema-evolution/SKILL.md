@@ -22,7 +22,7 @@ keeps its own domain model.
 - `contracts/events/README.md` (naming, envelope, money format).
 - `docs/event-catalog/README.md` (producers and consumers).
 - Owner: `event-driven-engineer`; cross-service rollout planned with the
-  `commerce-architect` (`/cross-service-change`).
+  `commerce-architect` (planning step of `/implement-feature`).
 
 ## Concepts and architecture
 

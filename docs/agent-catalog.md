@@ -45,7 +45,7 @@ Model choice: `opus` for design, cross-cutting judgement and independent review;
    agents work in one service or app per task.
 2. **Cross-service changes go through the architect.** Any task touching more than one
    service, app or a shared contract starts with a `commerce-architect` plan
-   (`/cross-service-change`). The plan names one owning agent per step; the main session
+   (planning step of `/implement-feature`). The plan names one owning agent per step; the main session
    dispatches them in order. Subagents cannot start other subagents.
 3. **Independent review.** After implementation, `code-reviewer` reviews the diff without
    the implementer's reasoning. `security-reviewer` additionally reviews changes to

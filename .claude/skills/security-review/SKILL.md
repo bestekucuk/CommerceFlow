@@ -43,7 +43,7 @@ validate payment/carrier responses.
 
 ## Step-by-step workflow
 
-1. Scope: list changed files and map to components (`/affected`).
+1. Scope: list changed files and map to components (`powershell -File scripts/affected-components.ps1`).
 2. Identify entry points (endpoints, consumers, admin actions) and assets (money, PII,
    credentials).
 3. Threat-model with STRIDE for each new/changed trust boundary.

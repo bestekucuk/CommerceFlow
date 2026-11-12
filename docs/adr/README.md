@@ -1,7 +1,7 @@
 # Architecture Decision Records
 
 New ADRs start as `Proposed`. Only the project owner moves an ADR to `Accepted`.
-Use `0000-template.md` (or the `/new-adr` command).
+Use `0000-template.md` (or `/architecture-decision-records`).
 
 | ADR | Title | Status |
 |---|---|---|

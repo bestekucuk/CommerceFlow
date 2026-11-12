@@ -1,8 +1,8 @@
 # scripts
 
-Status: **empty**. Repository-level helper scripts (CF-021), planned:
+Status: **one script implemented**, the rest planned. Repository-level helper scripts (CF-021):
 
-- `affected-services` — list services and apps changed since a git ref, including
+- `affected-components.ps1` (done) — list services and apps changed since a git ref, including
   services that consume a changed contract.
 - `build <service>` / `test <service>` — run one service's own build from the root.
 - `dev-up` / `dev-down` — start and stop the local stack.

@@ -58,14 +58,31 @@ Decided in ADR-0003. Ports and databases: `docs/architecture/service-catalog.md`
 2. **Contracts first, compatibility always.** Services deploy separately, so a single
    commit can still break production. Order: compatible contract change → consumers
    tolerate old and new → producer → remove old shape only in a new major version.
-   Use `/cross-service-change` to plan it.
+   `/implement-feature` plans it with the `commerce-architect`.
 3. **Reference the backlog ID** (`CF-012`) in commit messages.
-4. Use `/affected` to see which services and apps a change touches.
+4. `powershell -File scripts/affected-components.ps1 [base]` shows which services and
+   apps a change touches (including consumers of changed contracts).
+
+## Workflows (skills invoked with `/name`)
+
+`/implement-feature` · `/create-service` · `/create-api` · `/create-domain-event` ·
+`/write-tests` · `/run-e2e` · `/architecture-review` · `/code-review` ·
+`/debug-event-flow` · `/database-migration-review` · `/security-audit` ·
+`/prepare-pull-request`. Details: `docs/workflow-catalog.md`. There is no separate
+`.claude/commands/` mechanism; everything is a skill.
+
+## Hooks
+
+Configured in `.claude/settings.json`, documented in `docs/hook-catalog.md`: destructive
+command protection, secret detection, formatting validation, architecture documentation
+checks and test reminders. Test them with
+`powershell -File .claude/hooks/tests/Test-Hooks.ps1`.
 
 ## Hard boundaries
 
-- Do **not** `git push`, `git remote add` or `git remote set-url`. No remote has been
-  supplied. `.claude/hooks/guard-git.ps1` enforces this.
+- Claude never pushes, merges PRs, deploys, deletes data or runs destructive migrations.
+  No remote has been supplied. `.claude/hooks/guard-destructive-commands.ps1` enforces
+  this (deny) and asks before local irreversible commands.
 - Read a file before overwriting it.
 - Do not claim something works unless it was built and tested in this session. Every
   service and app is still a documentation-only scaffold.
@@ -88,6 +105,8 @@ Details: `docs/architecture/overview.md`.
 | Decisions | `docs/adr/` |
 | Events: who produces and consumes what | `docs/event-catalog/README.md` |
 | Event schema rules | `contracts/events/README.md` |
-| Claude agents, skills, commands, hooks | `.claude/` |
+| Claude agents, skills, hooks | `.claude/` |
+| Workflow skills | `docs/workflow-catalog.md` |
+| Hooks | `docs/hook-catalog.md` |
 | Agent team, ownership and collaboration rules | `docs/agent-catalog.md` |
 | Engineering skills (how to build each part) | `docs/skill-catalog.md` |

@@ -1,10 +1,15 @@
 # Skill Catalog
 
-Reusable engineering skills for CommerceFlow, in `.claude/skills/<name>/SKILL.md`. Every
-skill has the same 12 sections: Purpose, When to use, Prerequisites, Concepts and
-architecture, Step-by-step workflow, Practical code examples, Recommended project
-structure, Best practices, Anti-patterns, Failure scenarios, Testing strategy, Definition
-of Done.
+Reusable engineering (knowledge) skills for CommerceFlow, in
+`.claude/skills/<name>/SKILL.md`. Every knowledge skill has the same 12 sections: Purpose,
+When to use, Prerequisites, Concepts and architecture, Step-by-step workflow, Practical
+code examples, Recommended project structure, Best practices, Anti-patterns, Failure
+scenarios, Testing strategy, Definition of Done.
+
+There are 31 knowledge skills below. The 32nd entry, `code-review`, is now a **workflow
+skill** (`docs/workflow-catalog.md`); its knowledge content is kept unchanged in
+`.claude/skills/code-review/reference/review-guide.md`. Workflow skills (12) orchestrate
+agents and knowledge skills for a task; they are listed in `docs/workflow-catalog.md`.
 
 ## How skills are invoked
 
@@ -24,7 +29,7 @@ are templates that must be adapted and tested in the owning service.
 | `microservice-design` | Service boundaries, data ownership, sync vs async, independence checklist | `/microservice-design` | commerce-architect | all services | Boundary design, integration choices, new-service footprint, catalog updates |
 | `domain-driven-design` | Aggregates, invariants, value objects, domain events, ACLs; domain ≠ contract | `/domain-driven-design` | commerce-architect, kotlin/golang-backend-engineer | all services | Aggregate model with invariants and events, glossary terms, unit tests |
 | `clean-architecture` | Layers, ports/adapters, dependency rule, ArchUnit/Go import checks | `/clean-architecture` | kotlin/golang-backend-engineer, code-reviewer, commerce-architect | all services | Correct package layout, ports, passing architecture test |
-| `architecture-decision-records` | ADR numbering, template, statuses, supersession, index | `/architecture-decision-records`, `/new-adr` | commerce-architect | repository-wide | ADR file in `docs/adr/`, updated index, backlog follow-ups |
+| `architecture-decision-records` | ADR numbering, template, statuses, supersession, index | `/architecture-decision-records` | commerce-architect | repository-wide | ADR file in `docs/adr/`, updated index, backlog follow-ups |
 
 ## Backend
 
@@ -82,7 +87,7 @@ are templates that must be adapted and tested in the owning service.
 | `observability` | RED/USE, messaging/CDC/business metrics, JSON logs, dashboards, alerts | `/observability` | devops-engineer, kotlin/golang-backend-engineer | all services | Metrics, dashboards, alert rules (`reference/otel-collector.yaml`) |
 | `distributed-tracing` | W3C context over HTTP and through outbox → Debezium → Kafka, Go/Java setup | `/distributed-tracing` | devops-engineer, kotlin/golang-backend-engineer | all services | One trace across services for a placed order |
 | `security-review` | STRIDE, OWASP API Top 10 mapping, scanners, findings report | `/security-review` | security-reviewer | any changed component | Severity-ranked findings with evidence and owners |
-| `code-review` | Boundary checks, architecture rules, tests run, findings and verdict | `/code-review` | code-reviewer | any changed component | Verdict + ranked findings + commands run |
+| `code-review` *(workflow; guide in `reference/review-guide.md`)* | Boundary checks, architecture rules, tests run, findings and verdict | `/code-review` | code-reviewer | any changed component | Verdict + ranked findings + commands run |
 
 ## Reference files
 
@@ -90,6 +95,7 @@ are templates that must be adapted and tested in the owning service.
 |---|---|
 | `.claude/skills/debezium-cdc/reference/outbox-connector.json` | Template for `infrastructure/debezium/<svc>-outbox.json` |
 | `.claude/skills/observability/reference/otel-collector.yaml` | Template for `infrastructure/monitoring/otel-collector.yaml` |
+| `.claude/skills/code-review/reference/review-guide.md` | Full review method used by the `code-review` workflow and the `code-reviewer` agent |
 
 ## Conventions captured across skills
 
