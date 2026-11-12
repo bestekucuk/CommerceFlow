@@ -21,7 +21,7 @@ From this folder (Windows: `gradlew.bat`):
 |---|---|
 | Build + unit tests | `./gradlew build` |
 | Integration tests (Docker) | `./gradlew integrationTest` |
-| Run | `DB_URL=jdbc:postgresql://localhost:5432/pricing_db DB_USER=... DB_PASSWORD=... ./gradlew bootRun` |
+| Run | `DB_URL=jdbc:postgresql://localhost:15432/pricing_db DB_USER=... DB_PASSWORD=... ./gradlew bootRun` |
 | Image | from the repo root: `powershell -File scripts/build-service.ps1 pricing-service -Image` |
 
 | Endpoint | Purpose |

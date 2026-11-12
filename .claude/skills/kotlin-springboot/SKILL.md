@@ -32,7 +32,7 @@ production-ready baseline while keeping each one an **independent Gradle build**
   `build/`, never committed, never shared.
 - **Versions:** pinned in the service's own `gradle/libs.versions.toml`. Services may
   upgrade independently; keep them aligned by convention, not by a shared BOM project.
-- **Runtime:** Spring Boot 3.x, Java 21 toolchain, virtual threads enabled for blocking I/O.
+- **Runtime:** Spring Boot 3.3, bytecode target Java 17 (current repository choice: builds on any JDK 17+, images use Temurin 17); moving to Java 21 and virtual threads is a later per-service decision.
 
 ## Step-by-step workflow
 
@@ -120,7 +120,7 @@ spring:
   application.name: order-service
   threads.virtual.enabled: true
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/order_db}
+    url: ${DB_URL:jdbc:postgresql://localhost:15432/order_db}
     username: ${DB_USER:order_service}
     password: ${DB_PASSWORD}
   jpa:

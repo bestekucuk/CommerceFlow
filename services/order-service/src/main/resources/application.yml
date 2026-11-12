@@ -2,7 +2,7 @@ spring:
   application:
     name: order-service
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/order_db}
+    url: ${DB_URL:jdbc:postgresql://localhost:15432/order_db}
     username: ${DB_USER:order_service}
     password: ${DB_PASSWORD:}
   flyway:

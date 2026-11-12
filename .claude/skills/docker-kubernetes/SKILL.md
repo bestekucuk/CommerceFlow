@@ -27,7 +27,7 @@ running securely and observably in Compose and Kubernetes.
 
 - **Build context:** the service folder. Contracts are added with a BuildKit **named
   context** (`--build-context contracts=contracts`) so the image never sees other services.
-- **Images:** multi-stage; runtime stage minimal (`eclipse-temurin:21-jre` or distroless
+- **Images:** multi-stage; runtime stage minimal (`eclipse-temurin:17-jre` — the repository targets Java 17 — or distroless
   Java, `gcr.io/distroless/static:nonroot` for Go, `nginx-unprivileged` for apps); non-root;
   pinned tags (digests in CI).
 - **Compose:** the root `docker-compose.yml` runs platform components + services for local
@@ -52,7 +52,7 @@ Kotlin service `services/order-service/Dockerfile`:
 
 ```dockerfile
 # syntax=docker/dockerfile:1.7
-FROM eclipse-temurin:21-jdk AS build
+FROM eclipse-temurin:17-jdk AS build
 WORKDIR /src
 COPY --from=contracts . /contracts
 COPY gradlew settings.gradle.kts build.gradle.kts ./
@@ -62,7 +62,7 @@ COPY src ./src
 RUN ./gradlew --no-daemon bootJar -x test -PcontractsDir=/contracts \
  && java -Djarmode=tools -jar build/libs/*.jar extract --layers --launcher --destination /app
 
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:17-jre
 RUN useradd --system --uid 10001 app
 WORKDIR /app
 COPY --from=build /app/dependencies/ ./

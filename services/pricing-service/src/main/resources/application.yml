@@ -2,7 +2,7 @@ spring:
   application:
     name: pricing-service
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/pricing_db}
+    url: ${DB_URL:jdbc:postgresql://localhost:15432/pricing_db}
     username: ${DB_USER:pricing_service}
     password: ${DB_PASSWORD:}
   flyway:

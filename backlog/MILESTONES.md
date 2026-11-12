@@ -6,9 +6,9 @@ Generated from one data source; IDs `CF-0xx` keep the numbers already used in `d
 | Milestone | Phases | Exit criteria | Tasks done/total | Status |
 |---|---|---|---|---|
 | **M1** Foundation complete | 1, 2 | Monorepo, docs, scaffolds, Claude framework verified | 7/10 | 🟡 In progress |
-| **M2** Local platform verified | 3 | health.ps1 green and verify-cdc.ps1 passes | 0/4 | 🟡 In progress |
-| **M3** Vertical slice: product CDC | 4 | Product created via API arrives on Kafka with valid Avro; compatibility checks run | 0/5 | ⬜ Not started |
-| **M4** Downstream projections | 5 | Inventory and pricing consume product events idempotently | 0/6 | ⬜ Not started |
+| **M2** Local platform verified | 3 | health.ps1 green and verify-cdc.ps1 passes | 2/4 | 🟡 In progress |
+| **M3** Vertical slice: product CDC | 4 | Product created via API arrives on Kafka with valid Avro; compatibility checks run | 3/5 | 🟡 In progress |
+| **M4** Downstream projections | 5 | Inventory and pricing consume product events idempotently | 1/7 | 🟡 In progress |
 | **M5** Orders and payments | 6 | Order creation with quote; payment authorization/void handlers | 0/6 | ⬜ Not started |
 | **M6** Vertical slice: saga | 7 | Order saga happy path, compensation and timeouts verified on Compose | 0/10 | ⬜ Not started |
 | **M7** Admin usable | 8 | Staff manage catalog, prices and orders with real login | 0/6 | ⬜ Not started |

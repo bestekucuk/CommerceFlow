@@ -3,7 +3,7 @@
 Status legend: ✅ Done = verified in this repository (evidence given) · 🟡 In progress · ⛔ Blocked · ⬜ Not started.
 Generated from one data source; IDs `CF-0xx` keep the numbers already used in `docs/`. Snapshot: 2026-11-12.
 
-82 tasks — ✅ Done: 7, 🟡 In progress: 3, ⛔ Blocked: 1, ⬜ Not started: 71
+83 tasks — ✅ Done: 13, 🟡 In progress: 5, ⛔ Blocked: 1, ⬜ Not started: 64
 
 Phases are ordered by dependency, not by calendar; no dates are committed. The vertical slice (phases 3–7) is prioritised over breadth.
 
@@ -11,9 +11,9 @@ Phases are ordered by dependency, not by calendar; no dates are committed. The v
 |---|---|---|---|---|
 | 1. Engineering foundation | One repository, documented architecture, every component builds on its own. | 6 | 4 | 🟡 In progress |
 | 2. Claude Code framework | Claude works safely: agents, skills, workflows and guardrail hooks. | 4 | 3 | 🟡 In progress |
-| 3. Local infrastructure | Local stack with per-service databases, Kafka, Debezium and observability, verified healthy; CDC verified end to end. | 4 | 0 | 🟡 In progress |
-| 4. Product Service and CDC | **Vertical slice part 1**: product created via API reaches Kafka through outbox + Debezium with valid Avro; contract compatibility checks exist. | 5 | 0 | ⬜ Not started |
-| 5. Inventory and Customer | Inventory and pricing consume product events idempotently; customer profile exists. | 6 | 0 | ⬜ Not started |
+| 3. Local infrastructure | Local stack with per-service databases, Kafka, Debezium and observability, verified healthy; CDC verified end to end. | 4 | 2 | 🟡 In progress |
+| 4. Product Service and CDC | **Vertical slice part 1**: product created via API reaches Kafka through outbox + Debezium with valid Avro; contract compatibility checks exist. | 5 | 3 | 🟡 In progress |
+| 5. Inventory and Customer | Inventory and pricing consume product events idempotently; customer profile exists. | 7 | 1 | 🟡 In progress |
 | 6. Order and Payment | Orders can be created against a quote; payment handles authorization and void. | 6 | 0 | ⬜ Not started |
 | 7. Saga and asynchronous workflows | **Vertical slice part 2**: order saga confirms, compensates and times out correctly; shipping and notifications react. | 10 | 0 | ⬜ Not started |
 | 8. Admin Dashboard | Staff manage catalog, prices and orders through the admin BFF with real identity. | 6 | 0 | ⬜ Not started |
@@ -29,7 +29,7 @@ One repository, documented architecture, every component builds on its own.
 | Task | Title | Owner | Priority | Status |
 |---|---|---|---|---|
 | [CF-001](TASKS.md#cf-001) | Accept or revise ADRs 0005-0011 | `docs` | P0 | ⬜ Not started |
-| [CF-003](TASKS.md#cf-003) | Contract code generation tooling | `contracts, services` | P0 | ⬜ Not started |
+| [CF-003](TASKS.md#cf-003) | Contract code generation tooling | `contracts, services` | P0 | 🟡 In progress |
 | [CF-021](TASKS.md#cf-021) | Per-component build and test scripts | `scripts` | P0 | ✅ Done |
 | [CF-030](TASKS.md#cf-030) | Modular monorepo layout and root guides | `repository` | P0 | ✅ Done |
 | [CF-031](TASKS.md#cf-031) | Architecture documentation set | `docs` | P0 | ✅ Done |
@@ -52,9 +52,9 @@ Local stack with per-service databases, Kafka, Debezium and observability, verif
 
 | Task | Title | Owner | Priority | Status |
 |---|---|---|---|---|
-| [CF-005](TASKS.md#cf-005) | Local Compose infrastructure stack | `infrastructure` | P0 | 🟡 In progress |
-| [CF-037](TASKS.md#cf-037) | Verify CDC end to end locally | `infrastructure` | P0 | ⬜ Not started |
-| [CF-038](TASKS.md#cf-038) | Wire application services and Toxiproxy into Compose | `infrastructure` | P1 | ⬜ Not started |
+| [CF-005](TASKS.md#cf-005) | Local Compose infrastructure stack | `infrastructure` | P0 | ✅ Done |
+| [CF-037](TASKS.md#cf-037) | Verify CDC end to end locally | `infrastructure` | P0 | ✅ Done |
+| [CF-038](TASKS.md#cf-038) | Wire application services and Toxiproxy into Compose | `infrastructure` | P1 | 🟡 In progress |
 | [CF-039](TASKS.md#cf-039) | Expose Kafka Connect/Debezium metrics | `infrastructure` | P2 | ⬜ Not started |
 
 ## Phase 4 — Product Service and CDC
@@ -63,11 +63,11 @@ Local stack with per-service databases, Kafka, Debezium and observability, verif
 
 | Task | Title | Owner | Priority | Status |
 |---|---|---|---|---|
-| [CF-002](TASKS.md#cf-002) | v1 Avro schemas for the core event catalogue | `contracts/events` | P0 | ⬜ Not started |
+| [CF-002](TASKS.md#cf-002) | v1 Avro schemas for the core event catalogue | `contracts/events` | P0 | 🟡 In progress |
 | [CF-040](TASKS.md#cf-040) | Shared contract compatibility testing | `tests/contract` | P0 | ⬜ Not started |
-| [CF-043](TASKS.md#cf-043) | product-service: Product aggregate and catalog API | `services/product-service` | P0 | ⬜ Not started |
-| [CF-044](TASKS.md#cf-044) | product-service: ProductCreated through the outbox | `services/product-service` | P0 | ⬜ Not started |
-| [CF-045](TASKS.md#cf-045) | Vertical slice: product created reaches Kafka via Debezium | `tests/integration` | P0 | ⬜ Not started |
+| [CF-043](TASKS.md#cf-043) | product-service: Product aggregate and catalog API | `services/product-service` | P0 | ✅ Done |
+| [CF-044](TASKS.md#cf-044) | product-service: ProductCreated through the outbox | `services/product-service` | P0 | ✅ Done |
+| [CF-045](TASKS.md#cf-045) | Vertical slice: product created reaches Kafka via Debezium | `tests/integration` | P0 | ✅ Done |
 
 ## Phase 5 — Inventory and Customer
 
@@ -75,12 +75,13 @@ Inventory and pricing consume product events idempotently; customer profile exis
 
 | Task | Title | Owner | Priority | Status |
 |---|---|---|---|---|
-| [CF-046](TASKS.md#cf-046) | inventory-service: consume ProductCreated with inbox and DLT | `services/inventory-service` | P0 | ⬜ Not started |
+| [CF-046](TASKS.md#cf-046) | inventory-service: consume ProductCreated with inbox and DLT | `services/inventory-service` | P0 | ✅ Done |
 | [CF-048](TASKS.md#cf-048) | inventory-service: ReserveInventory / ReleaseInventory handlers | `services/inventory-service` | P0 | ⬜ Not started |
 | [CF-052](TASKS.md#cf-052) | pricing-service: prices with ETag and ProductPriceChanged | `services/pricing-service` | P0 | ⬜ Not started |
 | [CF-047](TASKS.md#cf-047) | inventory-service: stock adjustment API | `services/inventory-service` | P1 | ⬜ Not started |
 | [CF-050](TASKS.md#cf-050) | customer-service: profile and address API | `services/customer-service` | P1 | ⬜ Not started |
 | [CF-051](TASKS.md#cf-051) | customer-service: CustomerRegistered / CustomerContactChanged | `services/customer-service` | P1 | ⬜ Not started |
+| [CF-084](TASKS.md#cf-084) | Outbox and inbox retention jobs | `services/*` | P1 | ⬜ Not started |
 
 ## Phase 6 — Order and Payment
 
@@ -191,7 +192,7 @@ Per-component CI/CD, Helm/Kubernetes, Terraform, DR and retention ready for a fi
 ## Recommended next executable task
 
 1. **[CF-005](TASKS.md#cf-005) — finish verifying the local stack** (files are written; the first start was interrupted by a Docker Engine error). Restart Docker Desktop, then `infrastructure/scripts/up.ps1` and `health.ps1`. It unblocks 52 tasks, including the CDC verification [CF-037](TASKS.md#cf-037).
-2. In parallel, without Docker: **[CF-002](TASKS.md#cf-002) — v1 Avro schemas** (`/create-domain-event`, agent `event-driven-engineer`). It is P0, all its dependencies are done, and it unblocks 47 tasks on the vertical slice.
+2. In parallel, without Docker: **[CF-002](TASKS.md#cf-002) — v1 Avro schemas** (`/create-domain-event`, agent `event-driven-engineer`). It is P0, all its dependencies are done, and it unblocks 30 tasks on the vertical slice.
 3. Then **[CF-003](TASKS.md#cf-003)** (codegen) and **[CF-043](TASKS.md#cf-043)** (product API) to complete phase 4 inputs.
 
-Also ready: [CF-001](TASKS.md#cf-001), [CF-050](TASKS.md#cf-050), [CF-019](TASKS.md#cf-019), [CF-022](TASKS.md#cf-022), [CF-036](TASKS.md#cf-036).
+Also ready: [CF-052](TASKS.md#cf-052), [CF-001](TASKS.md#cf-001), [CF-065](TASKS.md#cf-065), [CF-050](TASKS.md#cf-050), [CF-038](TASKS.md#cf-038), [CF-047](TASKS.md#cf-047), [CF-019](TASKS.md#cf-019), [CF-012](TASKS.md#cf-012), [CF-042](TASKS.md#cf-042), [CF-022](TASKS.md#cf-022), [CF-084](TASKS.md#cf-084), [CF-039](TASKS.md#cf-039), [CF-036](TASKS.md#cf-036).

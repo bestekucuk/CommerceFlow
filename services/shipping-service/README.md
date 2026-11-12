@@ -25,7 +25,7 @@ from the repo root, which runs Go in Docker):
 | Unit tests | `make test` |
 | Integration tests (Docker) | `make integration` |
 | Build | `make build` |
-| Run | `DATABASE_URL=postgres://user:pass@localhost:5432/shipping_db go run ./cmd/shipping-service` |
+| Run | `DATABASE_URL=postgres://user:pass@localhost:15432/shipping_db go run ./cmd/shipping-service` |
 | Image | from the repo root: `powershell -File scripts/build-service.ps1 shipping-service -Image` |
 
 | Endpoint | Purpose |

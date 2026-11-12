@@ -9,7 +9,7 @@ Arrows point from a prerequisite to the task that needs it. Colours: green done,
 flowchart LR
     subgraph P1["Phase 1: Engineering foundation"]
         CF001["CF-001<br/>Accept or revise ADRs 0005-0011"]:::todo
-        CF003["CF-003<br/>Contract code generation tooling"]:::todo
+        CF003["CF-003<br/>Contract code generation tooling"]:::wip
         CF021["CF-021<br/>Per-component build and test scripts"]:::done
         CF030["CF-030<br/>Modular monorepo layout and root guide"]:::done
         CF031["CF-031<br/>Architecture documentation set"]:::done
@@ -22,20 +22,20 @@ flowchart LR
         CF036["CF-036<br/>Observe hooks in a live Claude session"]:::wip
     end
     subgraph P3["Phase 3: Local infrastructure"]
-        CF005["CF-005<br/>Local Compose infrastructure stack"]:::wip
-        CF037["CF-037<br/>Verify CDC end to end locally"]:::todo
-        CF038["CF-038<br/>Wire application services and Toxiprox"]:::todo
+        CF005["CF-005<br/>Local Compose infrastructure stack"]:::done
+        CF037["CF-037<br/>Verify CDC end to end locally"]:::done
+        CF038["CF-038<br/>Wire application services and Toxiprox"]:::wip
         CF039["CF-039<br/>Expose Kafka Connect/Debezium metrics"]:::todo
     end
     subgraph P4["Phase 4: Product Service and CDC"]
-        CF002["CF-002<br/>v1 Avro schemas for the core event cat"]:::todo
+        CF002["CF-002<br/>v1 Avro schemas for the core event cat"]:::wip
         CF040["CF-040<br/>Shared contract compatibility testing"]:::todo
-        CF043["CF-043<br/>product-service: Product aggregate and"]:::todo
-        CF044["CF-044<br/>product-service: ProductCreated throug"]:::todo
-        CF045["CF-045<br/>Vertical slice: product created reache"]:::todo
+        CF043["CF-043<br/>product-service: Product aggregate and"]:::done
+        CF044["CF-044<br/>product-service: ProductCreated throug"]:::done
+        CF045["CF-045<br/>Vertical slice: product created reache"]:::done
     end
     subgraph P5["Phase 5: Inventory and Customer"]
-        CF046["CF-046<br/>inventory-service: consume ProductCrea"]:::todo
+        CF046["CF-046<br/>inventory-service: consume ProductCrea"]:::done
         CF047["CF-047<br/>inventory-service: stock adjustment AP"]:::todo
         CF048["CF-048<br/>inventory-service: ReserveInventory / "]:::todo
         CF050["CF-050<br/>customer-service: profile and address "]:::todo
@@ -128,11 +128,8 @@ flowchart LR
     CF005 --> CF040
     CF032 --> CF043
     CF043 --> CF044
-    CF002 --> CF044
-    CF003 --> CF044
     CF044 --> CF045
     CF037 --> CF045
-    CF038 --> CF045
     CF045 --> CF046
     CF046 --> CF047
     CF046 --> CF048
@@ -228,7 +225,7 @@ flowchart LR
 
 ## Critical path (longest dependency chain)
 
-[CF-030](TASKS.md#cf-030) → [CF-021](TASKS.md#cf-021) → [CF-032](TASKS.md#cf-032) → [CF-043](TASKS.md#cf-043) → [CF-044](TASKS.md#cf-044) → [CF-045](TASKS.md#cf-045) → [CF-052](TASKS.md#cf-052) → [CF-053](TASKS.md#cf-053) → [CF-055](TASKS.md#cf-055) → [CF-010](TASKS.md#cf-010) → [CF-060](TASKS.md#cf-060) → [CF-062](TASKS.md#cf-062)
+[CF-030](TASKS.md#cf-030) → [CF-021](TASKS.md#cf-021) → [CF-032](TASKS.md#cf-032) → [CF-043](TASKS.md#cf-043) → [CF-044](TASKS.md#cf-044) → [CF-045](TASKS.md#cf-045) → [CF-046](TASKS.md#cf-046) → [CF-047](TASKS.md#cf-047) → [CF-072](TASKS.md#cf-072) → [CF-073](TASKS.md#cf-073) → [CF-017](TASKS.md#cf-017) → [CF-084](TASKS.md#cf-084)
 
 ## Vertical slice first
 
@@ -240,14 +237,20 @@ The first end-to-end slice proves the architecture before breadth: product creat
 
 | Task | Title | Priority | Unblocks (transitively) |
 |---|---|---|---|
-| [CF-005](TASKS.md#cf-005) | Local Compose infrastructure stack | P0 | 52 tasks |
-| [CF-002](TASKS.md#cf-002) | v1 Avro schemas for the core event catalogue | P0 | 47 tasks |
-| [CF-003](TASKS.md#cf-003) | Contract code generation tooling | P0 | 43 tasks |
-| [CF-043](TASKS.md#cf-043) | product-service: Product aggregate and catalog API | P0 | 43 tasks |
+| [CF-052](TASKS.md#cf-052) | pricing-service: prices with ETag and ProductPriceChanged | P0 | 35 tasks |
 | [CF-001](TASKS.md#cf-001) | Accept or revise ADRs 0005-0011 | P0 | 32 tasks |
+| [CF-002](TASKS.md#cf-002) | v1 Avro schemas for the core event catalogue | P0 | 30 tasks |
+| [CF-065](TASKS.md#cf-065) | Local identity provider (Keycloak) and roles | P0 | 23 tasks |
+| [CF-003](TASKS.md#cf-003) | Contract code generation tooling | P0 | 0 tasks |
 | [CF-050](TASKS.md#cf-050) | customer-service: profile and address API | P1 | 32 tasks |
+| [CF-038](TASKS.md#cf-038) | Wire application services and Toxiproxy into Compose | P1 | 15 tasks |
+| [CF-047](TASKS.md#cf-047) | inventory-service: stock adjustment API | P1 | 15 tasks |
 | [CF-019](TASKS.md#cf-019) | Helm chart template and per-service values | P1 | 10 tasks |
+| [CF-012](TASKS.md#cf-012) | OpenTelemetry in all services, trace through outbox | P1 | 1 tasks |
+| [CF-042](TASKS.md#cf-042) | DLT replay tool | P1 | 1 tasks |
 | [CF-022](TASKS.md#cf-022) | Architecture tests in every service | P1 | 0 tasks |
+| [CF-084](TASKS.md#cf-084) | Outbox and inbox retention jobs | P1 | 0 tasks |
+| [CF-039](TASKS.md#cf-039) | Expose Kafka Connect/Debezium metrics | P2 | 0 tasks |
 | [CF-036](TASKS.md#cf-036) | Observe hooks in a live Claude session | P3 | 0 tasks |
 
 ## Blocked

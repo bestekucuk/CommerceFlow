@@ -3,7 +3,7 @@
 Status legend: ✅ Done = verified in this repository (evidence given) · 🟡 In progress · ⛔ Blocked · ⬜ Not started.
 Generated from one data source; IDs `CF-0xx` keep the numbers already used in `docs/`. Snapshot: 2026-11-12.
 
-82 tasks — ✅ Done: 7, 🟡 In progress: 3, ⛔ Blocked: 1, ⬜ Not started: 71
+83 tasks — ✅ Done: 13, 🟡 In progress: 5, ⛔ Blocked: 1, ⬜ Not started: 64
 
 Every task also meets the general [Definition of Done](DEFINITION-OF-DONE.md).
 
@@ -46,7 +46,7 @@ Every task also meets the general [Definition of Done](DEFINITION-OF-DONE.md).
 | Field | Value |
 |---|---|
 | Task ID | CF-003 |
-| Status | ⬜ Not started |
+| Status | 🟡 In progress — Kotlin Avro codegen from ../../contracts in product-service (Gradle + Docker build context); Go decodes with the registry writer schema (no codegen); OpenAPI client generation for apps open |
 | Epic / feature | CF-EPIC-01 / F-03 Contract code generation |
 | Owning service or application | `contracts, services` |
 | Priority | P0 |
@@ -294,7 +294,7 @@ Every task also meets the general [Definition of Done](DEFINITION-OF-DONE.md).
 | Field | Value |
 |---|---|
 | Task ID | CF-036 |
-| Status | 🟡 In progress — detect-secrets ran on a real git commit (passed clean); deny/ask not yet observed live |
+| Status | 🟡 In progress — detect-secrets ran on a real commit; Stop hooks (remind-tests, architecture-docs A1) fired live and were satisfied; deny/ask not yet observed live |
 | Epic / feature | CF-EPIC-02 / F-05 Guardrail hooks |
 | Owning service or application | `.claude/hooks` |
 | Priority | P3 |
@@ -325,7 +325,7 @@ Every task also meets the general [Definition of Done](DEFINITION-OF-DONE.md).
 | Field | Value |
 |---|---|
 | Task ID | CF-005 |
-| Status | 🟡 In progress — files written and `docker compose config` valid; first start interrupted by a Docker Engine 500 error — not yet verified |
+| Status | ✅ Done — up.ps1 + health.ps1 all checks passed 2026-11-12; verification log in infrastructure/README.md |
 | Epic / feature | CF-EPIC-03 / F-06 Local Compose stack |
 | Owning service or application | `infrastructure` |
 | Priority | P0 |
@@ -356,7 +356,7 @@ Every task also meets the general [Definition of Done](DEFINITION-OF-DONE.md).
 | Field | Value |
 |---|---|
 | Task ID | CF-037 |
-| Status | ⬜ Not started |
+| Status | ✅ Done — verify-cdc.ps1 passed 2026-11-12 after switching to BinaryDataConverter (ADR-0007) |
 | Epic / feature | CF-EPIC-03 / F-07 Local CDC pipeline |
 | Owning service or application | `infrastructure` |
 | Priority | P0 |
@@ -385,7 +385,7 @@ Every task also meets the general [Definition of Done](DEFINITION-OF-DONE.md).
 | Field | Value |
 |---|---|
 | Task ID | CF-038 |
-| Status | ⬜ Not started |
+| Status | 🟡 In progress — product-service and inventory-service in the `apps` profile, healthy; 8 components and Toxiproxy remain |
 | Epic / feature | CF-EPIC-03 / F-06 Local Compose stack |
 | Owning service or application | `infrastructure` |
 | Priority | P1 |
@@ -447,7 +447,7 @@ Every task also meets the general [Definition of Done](DEFINITION-OF-DONE.md).
 | Field | Value |
 |---|---|
 | Task ID | CF-002 |
-| Status | ⬜ Not started |
+| Status | 🟡 In progress — EventMetadata.v1 + ProductCreated.v1 written and registered (id 1, BACKWARD); 13 events + 4 commands remain |
 | Epic / feature | CF-EPIC-12 / F-19 Contracts and compatibility |
 | Owning service or application | `contracts/events` |
 | Priority | P0 |
@@ -509,7 +509,7 @@ Every task also meets the general [Definition of Done](DEFINITION-OF-DONE.md).
 | Field | Value |
 |---|---|
 | Task ID | CF-043 |
-| Status | ⬜ Not started |
+| Status | ✅ Done — POST/GET /v1/products; spec lint valid; 23 unit tests + ProductApiIT 6/6 (Testcontainers) 2026-11-12; code review approve-with-comments, fixes retested |
 | Epic / feature | CF-EPIC-04 / F-08 Product catalog API |
 | Owning service or application | `services/product-service` |
 | Priority | P0 |
@@ -541,11 +541,11 @@ Every task also meets the general [Definition of Done](DEFINITION-OF-DONE.md).
 | Field | Value |
 |---|---|
 | Task ID | CF-044 |
-| Status | ⬜ Not started |
+| Status | ✅ Done — needed only the ProductCreated slices of CF-002/CF-003 (dependency narrowed 2026-11-12); OutboxAtomicityIT 3/3; writer schema pinned to the generated class (registry id 1), use.latest.version=false; retested 2026-11-12 |
 | Epic / feature | CF-EPIC-04 / F-09 Product events via CDC (vertical slice) |
 | Owning service or application | `services/product-service` |
 | Priority | P0 |
-| Dependencies | [CF-043](TASKS.md#cf-043), [CF-002](TASKS.md#cf-002), [CF-003](TASKS.md#cf-003) |
+| Dependencies | [CF-043](TASKS.md#cf-043) |
 | Required agent | `kotlin-backend-engineer` |
 | Required skills | `transactional-outbox`, `schema-evolution` |
 
@@ -571,11 +571,11 @@ Every task also meets the general [Definition of Done](DEFINITION-OF-DONE.md).
 | Field | Value |
 |---|---|
 | Task ID | CF-045 |
-| Status | ⬜ Not started |
+| Status | ✅ Done — needed only the product/inventory part of CF-038 (dependency narrowed 2026-11-12); tests/integration/run-e2e.ps1 PASS 2026-11-12: key, headers, Avro envelope (schema id 1), correlation id, one Tempo trace across both services; not yet in CI (needs CF-020) |
 | Epic / feature | CF-EPIC-04 / F-09 Product events via CDC (vertical slice) |
 | Owning service or application | `tests/integration` |
 | Priority | P0 |
-| Dependencies | [CF-044](TASKS.md#cf-044), [CF-037](TASKS.md#cf-037), [CF-038](TASKS.md#cf-038) |
+| Dependencies | [CF-044](TASKS.md#cf-044), [CF-037](TASKS.md#cf-037) |
 | Required agent | `test-engineer` |
 | Required skills | `playwright-e2e`, `debezium-cdc`, `distributed-tracing` |
 
@@ -604,7 +604,7 @@ Every task also meets the general [Definition of Done](DEFINITION-OF-DONE.md).
 | Field | Value |
 |---|---|
 | Task ID | CF-046 |
-| Status | ⬜ Not started |
+| Status | ✅ Done — inventory consumer: unit + Testcontainers (processing, duplicates, poison -> DLT, permanent data errors -> DLT, transient retries, restart from committed offsets) pass 2026-11-12 |
 | Epic / feature | CF-EPIC-06 / F-11 Stock projection and adjustments |
 | Owning service or application | `services/inventory-service` |
 | Priority | P0 |
@@ -777,6 +777,37 @@ Every task also meets the general [Definition of Done](DEFINITION-OF-DONE.md).
 **Definition of Done** — general DoD, plus:
 
 - security-audit on PII fields
+
+### CF-084
+
+**Outbox and inbox retention jobs**
+
+| Field | Value |
+|---|---|
+| Task ID | CF-084 |
+| Status | ⬜ Not started — raised by the Prompt 09 code review (2026-11-12) |
+| Epic / feature | CF-EPIC-06 / F-11 Stock projection and adjustments |
+| Owning service or application | `services/*` |
+| Priority | P1 |
+| Dependencies | [CF-044](TASKS.md#cf-044), [CF-046](TASKS.md#cf-046) |
+| Required agent | `database-engineer` |
+| Required skills | `transactional-outbox`, `idempotent-consumer`, `database-migrations` |
+
+**Description.** Delete published outbox rows and old inbox rows in batches (per service, own database) after a retention window agreed with ops; outbox rows are only needed until Debezium has read them.
+
+**Acceptance criteria**
+
+- Outbox/inbox tables stay bounded under load
+- Deletion runs in small batches without long locks
+- Inbox retention exceeds the maximum redelivery window
+
+**Test requirements**
+
+- retention job integration test
+
+**Definition of Done** — general DoD, plus:
+
+- Retention documented in the service README
 
 ## Phase 6 — Order and Payment
 

@@ -7,16 +7,16 @@ Generated from one data source; IDs `CF-0xx` keep the numbers already used in `d
 |---|---|---|---|---|---|
 | **CF-EPIC-01** Engineering Foundation | Monorepo, architecture decisions, documentation, per-component builds and contract tooling. | 1 | F-01, F-02, F-03 | 4/6 | 🟡 In progress |
 | **CF-EPIC-02** Claude Code Agent Framework | Agents, skills, workflows and hooks that let Claude work safely in the monorepo. | 2 | F-04, F-05 | 3/4 | 🟡 In progress |
-| **CF-EPIC-03** Local Infrastructure | Docker Compose stack: PostgreSQL, Kafka, Debezium, Schema Registry, Redis, observability. | 3 | F-06, F-07 | 0/3 | 🟡 In progress |
-| **CF-EPIC-04** Product Management | Catalog bounded context: products, SKUs, lifecycle, product events. | 4 | F-08, F-09 | 0/3 | ⬜ Not started |
+| **CF-EPIC-03** Local Infrastructure | Docker Compose stack: PostgreSQL, Kafka, Debezium, Schema Registry, Redis, observability. | 3 | F-06, F-07 | 2/3 | 🟡 In progress |
+| **CF-EPIC-04** Product Management | Catalog bounded context: products, SKUs, lifecycle, product events. | 4 | F-08, F-09 | 3/3 | ✅ Done |
 | **CF-EPIC-05** Customer Management | Customer profiles, addresses, contact events. | 5 | F-10 | 0/2 | ⬜ Not started |
-| **CF-EPIC-06** Inventory Management | Stock, reservations, saga participation. | 5, 7 | F-11, F-12 | 0/4 | ⬜ Not started |
+| **CF-EPIC-06** Inventory Management | Stock, reservations, saga participation. | 5, 7 | F-11, F-12 | 1/5 | 🟡 In progress |
 | **CF-EPIC-07** Pricing and Promotions | Prices, price lists, quotes, promotions. | 5, 6 | F-13 | 0/2 | ⬜ Not started |
 | **CF-EPIC-08** Order Management | Order aggregate, order creation, order history, saga orchestration. | 6, 7 | F-14, F-15 | 0/7 | ⬜ Not started |
 | **CF-EPIC-09** Payment Management | Provider adapter, authorization, void, refund. | 6, 7 | F-16 | 0/2 | ⬜ Not started |
 | **CF-EPIC-10** Shipping Management | Shipments, carrier adapter, tracking. | 7 | F-17 | 0/2 | ⬜ Not started |
 | **CF-EPIC-11** Notification Processing | Customer notifications from order, payment and shipment events. | 7 | F-18 | 0/1 | ⬜ Not started |
-| **CF-EPIC-12** Event Driven Architecture | Contracts, schema registry, compatibility, outbox/CDC, DLT tooling. | 4, 7 | F-19, F-20 | 0/5 | ⬜ Not started |
+| **CF-EPIC-12** Event Driven Architecture | Contracts, schema registry, compatibility, outbox/CDC, DLT tooling. | 4, 7 | F-19, F-20 | 0/5 | 🟡 In progress |
 | **CF-EPIC-13** Admin Dashboard | Back-office UI through the admin BFF. | 8 | F-21 | 0/4 | ⬜ Not started |
 | **CF-EPIC-14** Storefront | Customer UI, catalog read model, checkout. | 9 | F-22, F-23 | 0/5 | ⬜ Not started |
 | **CF-EPIC-15** Testing and Quality | Architecture, contract, integration, E2E, performance and resilience tests. | 10 | F-24 | 0/6 | 🟡 In progress |
@@ -30,7 +30,7 @@ Monorepo, architecture decisions, documentation, per-component builds and contra
 
 - **F-01 Repository and architecture baseline**: [CF-001](TASKS.md#cf-001) Accept or revise ADRs 0005-0011 (⬜ Not started), [CF-030](TASKS.md#cf-030) Modular monorepo layout and root guides (✅ Done), [CF-031](TASKS.md#cf-031) Architecture documentation set (✅ Done)
 - **F-02 Per-component builds and scaffolds**: [CF-021](TASKS.md#cf-021) Per-component build and test scripts (✅ Done), [CF-032](TASKS.md#cf-032) Buildable scaffolds for 8 services and 2 apps (✅ Done)
-- **F-03 Contract code generation**: [CF-003](TASKS.md#cf-003) Contract code generation tooling (⬜ Not started)
+- **F-03 Contract code generation**: [CF-003](TASKS.md#cf-003) Contract code generation tooling (🟡 In progress)
 
 ## CF-EPIC-02 — Claude Code Agent Framework
 
@@ -43,15 +43,15 @@ Agents, skills, workflows and hooks that let Claude work safely in the monorepo.
 
 Docker Compose stack: PostgreSQL, Kafka, Debezium, Schema Registry, Redis, observability.
 
-- **F-06 Local Compose stack**: [CF-005](TASKS.md#cf-005) Local Compose infrastructure stack (🟡 In progress), [CF-038](TASKS.md#cf-038) Wire application services and Toxiproxy into Compose (⬜ Not started)
-- **F-07 Local CDC pipeline**: [CF-037](TASKS.md#cf-037) Verify CDC end to end locally (⬜ Not started)
+- **F-06 Local Compose stack**: [CF-005](TASKS.md#cf-005) Local Compose infrastructure stack (✅ Done), [CF-038](TASKS.md#cf-038) Wire application services and Toxiproxy into Compose (🟡 In progress)
+- **F-07 Local CDC pipeline**: [CF-037](TASKS.md#cf-037) Verify CDC end to end locally (✅ Done)
 
 ## CF-EPIC-04 — Product Management
 
 Catalog bounded context: products, SKUs, lifecycle, product events.
 
-- **F-08 Product catalog API**: [CF-043](TASKS.md#cf-043) product-service: Product aggregate and catalog API (⬜ Not started)
-- **F-09 Product events via CDC (vertical slice)**: [CF-044](TASKS.md#cf-044) product-service: ProductCreated through the outbox (⬜ Not started), [CF-045](TASKS.md#cf-045) Vertical slice: product created reaches Kafka via Debezium (⬜ Not started)
+- **F-08 Product catalog API**: [CF-043](TASKS.md#cf-043) product-service: Product aggregate and catalog API (✅ Done)
+- **F-09 Product events via CDC (vertical slice)**: [CF-044](TASKS.md#cf-044) product-service: ProductCreated through the outbox (✅ Done), [CF-045](TASKS.md#cf-045) Vertical slice: product created reaches Kafka via Debezium (✅ Done)
 
 ## CF-EPIC-05 — Customer Management
 
@@ -63,7 +63,7 @@ Customer profiles, addresses, contact events.
 
 Stock, reservations, saga participation.
 
-- **F-11 Stock projection and adjustments**: [CF-046](TASKS.md#cf-046) inventory-service: consume ProductCreated with inbox and DLT (⬜ Not started), [CF-047](TASKS.md#cf-047) inventory-service: stock adjustment API (⬜ Not started)
+- **F-11 Stock projection and adjustments**: [CF-046](TASKS.md#cf-046) inventory-service: consume ProductCreated with inbox and DLT (✅ Done), [CF-047](TASKS.md#cf-047) inventory-service: stock adjustment API (⬜ Not started), [CF-084](TASKS.md#cf-084) Outbox and inbox retention jobs (⬜ Not started)
 - **F-12 Reservations for the saga**: [CF-048](TASKS.md#cf-048) inventory-service: ReserveInventory / ReleaseInventory handlers (⬜ Not started), [CF-049](TASKS.md#cf-049) inventory-service: commit reservation on OrderConfirmed and expiry (⬜ Not started)
 
 ## CF-EPIC-07 — Pricing and Promotions
@@ -101,7 +101,7 @@ Customer notifications from order, payment and shipment events.
 
 Contracts, schema registry, compatibility, outbox/CDC, DLT tooling.
 
-- **F-19 Contracts and compatibility**: [CF-002](TASKS.md#cf-002) v1 Avro schemas for the core event catalogue (⬜ Not started), [CF-040](TASKS.md#cf-040) Shared contract compatibility testing (⬜ Not started)
+- **F-19 Contracts and compatibility**: [CF-002](TASKS.md#cf-002) v1 Avro schemas for the core event catalogue (🟡 In progress), [CF-040](TASKS.md#cf-040) Shared contract compatibility testing (⬜ Not started)
 - **F-20 Operability of the event pipeline**: [CF-023](TASKS.md#cf-023) Runbooks: slot growth, DLT replay, stuck saga, registry rejects schema (⬜ Not started), [CF-039](TASKS.md#cf-039) Expose Kafka Connect/Debezium metrics (⬜ Not started), [CF-042](TASKS.md#cf-042) DLT replay tool (⬜ Not started)
 
 ## CF-EPIC-13 — Admin Dashboard
