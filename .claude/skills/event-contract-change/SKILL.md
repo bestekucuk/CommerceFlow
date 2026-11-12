@@ -13,7 +13,8 @@ description: Step-by-step procedure for adding, evolving or deprecating a Commer
      file `<Event>.v<N+1>.avsc` and new topic suffix `.v<N+1>`.
 3. **Edit the schema** and update `docs/event-catalog/README.md` (producer, consumers,
    version).
-4. **Ask the `event-contract-steward` agent** to review the change.
+4. **Have the `event-driven-engineer` agent** design or check the change, and the
+   `code-reviewer` agent review it independently.
 5. **Plan rollout** with `/cross-service-change`. Services deploy separately, so even in
    one repository the order matters:
    - Additive: consumers first (tolerant reader), then producer.

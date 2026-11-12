@@ -89,3 +89,4 @@ Details: `docs/architecture/overview.md`.
 | Events: who produces and consumes what | `docs/event-catalog/README.md` |
 | Event schema rules | `contracts/events/README.md` |
 | Claude agents, skills, commands, hooks | `.claude/` |
+| Agent team, ownership and collaboration rules | `docs/agent-catalog.md` |
