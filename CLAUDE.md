@@ -82,7 +82,7 @@ checks and test reminders. Test them with
 ## Hard boundaries
 
 - Claude never pushes, merges PRs, deploys, deletes data or runs destructive migrations.
-  No remote has been supplied. `.claude/hooks/guard-destructive-commands.ps1` enforces
+  The owner pushes to `origin` (GitHub) themselves. `.claude/hooks/guard-destructive-commands.ps1` enforces
   this (deny) and asks before local irreversible commands.
 - Read a file before overwriting it.
 - Do not claim something works unless it was built and tested in this session. Every

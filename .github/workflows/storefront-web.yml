@@ -1,0 +1,38 @@
+# CI for storefront-web only. Generated layout: path filters = own folder, the contracts it
+# produces or consumes, its own workflow and the reusable template.
+name: storefront-web
+
+on:
+  pull_request:
+    paths:
+      - "apps/storefront-web/**"
+      - "contracts/openapi/product-service.*"
+      - "contracts/openapi/pricing-service.*"
+      - "contracts/openapi/customer-service.*"
+      - "contracts/openapi/order-service.*"
+      - ".github/workflows/storefront-web.yml"
+      - ".github/workflows/_web-app.yml"
+  push:
+    branches: [main]
+    paths:
+      - "apps/storefront-web/**"
+      - "contracts/openapi/product-service.*"
+      - "contracts/openapi/pricing-service.*"
+      - "contracts/openapi/customer-service.*"
+      - "contracts/openapi/order-service.*"
+      - ".github/workflows/storefront-web.yml"
+      - ".github/workflows/_web-app.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: storefront-web-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    uses: ./.github/workflows/_web-app.yml
+    with:
+      app: storefront-web

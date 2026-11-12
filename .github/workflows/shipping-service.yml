@@ -1,0 +1,38 @@
+# CI for shipping-service only. Generated layout: path filters = own folder, the contracts it
+# produces or consumes, its own workflow and the reusable template.
+name: shipping-service
+
+on:
+  pull_request:
+    paths:
+      - "services/shipping-service/**"
+      - "contracts/events/common/**"
+      - "contracts/events/shipment/**"
+      - "contracts/events/order/**"
+      - "contracts/openapi/shipping-service.*"
+      - ".github/workflows/shipping-service.yml"
+      - ".github/workflows/_go-service.yml"
+  push:
+    branches: [main]
+    paths:
+      - "services/shipping-service/**"
+      - "contracts/events/common/**"
+      - "contracts/events/shipment/**"
+      - "contracts/events/order/**"
+      - "contracts/openapi/shipping-service.*"
+      - ".github/workflows/shipping-service.yml"
+      - ".github/workflows/_go-service.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: shipping-service-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    uses: ./.github/workflows/_go-service.yml
+    with:
+      service: shipping-service

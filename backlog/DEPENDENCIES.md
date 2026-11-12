@@ -41,6 +41,7 @@ flowchart LR
         CF050["CF-050<br/>customer-service: profile and address "]:::todo
         CF051["CF-051<br/>customer-service: CustomerRegistered /"]:::todo
         CF052["CF-052<br/>pricing-service: prices with ETag and "]:::todo
+        CF094["CF-094<br/>Outbox and inbox retention jobs"]:::todo
     end
     subgraph P6["Phase 6: Order and Payment"]
         CF014["CF-014<br/>Decide cart ownership"]:::todo
@@ -80,7 +81,7 @@ flowchart LR
     subgraph P10["Phase 10: Complete testing"]
         CF017["CF-017<br/>Pact consumer/provider and broker"]:::todo
         CF018["CF-018<br/>k6 baselines for browse and checkout"]:::todo
-        CF020["CF-020<br/>Reusable CI workflows per language"]:::blocked
+        CF020["CF-020<br/>Reusable CI workflows per language"]:::wip
         CF022["CF-022<br/>Architecture tests in every service"]:::wip
         CF076["CF-076<br/>Cross-service integration suite"]:::todo
         CF077["CF-077<br/>Cross-app Playwright journeys"]:::todo
@@ -98,7 +99,7 @@ flowchart LR
         CF019["CF-019<br/>Helm chart template and per-service va"]:::todo
         CF026["CF-026<br/>Data retention with legal input"]:::todo
         CF027["CF-027<br/>RPO/RTO, backups and restore drills"]:::todo
-        CF080["CF-080<br/>Dependency-aware CI triggering"]:::todo
+        CF080["CF-080<br/>Dependency-aware CI triggering"]:::wip
         CF081["CF-081<br/>Kubernetes base: namespaces, network p"]:::todo
         CF082["CF-082<br/>Terraform baseline"]:::todo
         CF083["CF-083<br/>Production Debezium: heartbeats, failo"]:::todo
@@ -130,6 +131,8 @@ flowchart LR
     CF043 --> CF044
     CF044 --> CF045
     CF037 --> CF045
+    CF044 --> CF094
+    CF046 --> CF094
     CF045 --> CF046
     CF046 --> CF047
     CF046 --> CF048
@@ -225,7 +228,7 @@ flowchart LR
 
 ## Critical path (longest dependency chain)
 
-[CF-030](TASKS.md#cf-030) → [CF-021](TASKS.md#cf-021) → [CF-032](TASKS.md#cf-032) → [CF-043](TASKS.md#cf-043) → [CF-044](TASKS.md#cf-044) → [CF-045](TASKS.md#cf-045) → [CF-046](TASKS.md#cf-046) → [CF-047](TASKS.md#cf-047) → [CF-072](TASKS.md#cf-072) → [CF-073](TASKS.md#cf-073) → [CF-017](TASKS.md#cf-017) → [CF-084](TASKS.md#cf-084)
+[CF-030](TASKS.md#cf-030) → [CF-021](TASKS.md#cf-021) → [CF-032](TASKS.md#cf-032) → [CF-043](TASKS.md#cf-043) → [CF-044](TASKS.md#cf-044) → [CF-045](TASKS.md#cf-045) → [CF-052](TASKS.md#cf-052) → [CF-053](TASKS.md#cf-053) → [CF-055](TASKS.md#cf-055) → [CF-010](TASKS.md#cf-010) → [CF-060](TASKS.md#cf-060) → [CF-062](TASKS.md#cf-062)
 
 ## Vertical slice first
 
@@ -245,17 +248,17 @@ The first end-to-end slice proves the architecture before breadth: product creat
 | [CF-050](TASKS.md#cf-050) | customer-service: profile and address API | P1 | 32 tasks |
 | [CF-038](TASKS.md#cf-038) | Wire application services and Toxiproxy into Compose | P1 | 15 tasks |
 | [CF-047](TASKS.md#cf-047) | inventory-service: stock adjustment API | P1 | 15 tasks |
+| [CF-020](TASKS.md#cf-020) | Reusable CI workflows per language | P1 | 12 tasks |
 | [CF-019](TASKS.md#cf-019) | Helm chart template and per-service values | P1 | 10 tasks |
 | [CF-012](TASKS.md#cf-012) | OpenTelemetry in all services, trace through outbox | P1 | 1 tasks |
 | [CF-042](TASKS.md#cf-042) | DLT replay tool | P1 | 1 tasks |
 | [CF-022](TASKS.md#cf-022) | Architecture tests in every service | P1 | 0 tasks |
-| [CF-084](TASKS.md#cf-084) | Outbox and inbox retention jobs | P1 | 0 tasks |
+| [CF-094](TASKS.md#cf-094) | Outbox and inbox retention jobs | P1 | 0 tasks |
 | [CF-039](TASKS.md#cf-039) | Expose Kafka Connect/Debezium metrics | P2 | 0 tasks |
 | [CF-036](TASKS.md#cf-036) | Observe hooks in a live Claude session | P3 | 0 tasks |
 
 ## Blocked
 
-- [CF-020](TASKS.md#cf-020) Reusable CI workflows per language — blocked: repository has no remote (only the user adds one)
 
 ## Contract dependencies (monorepo rule)
 

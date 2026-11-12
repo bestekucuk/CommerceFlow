@@ -1,0 +1,60 @@
+# Reusable CI for one Kotlin + Spring Boot service. Shares CI steps only, never code:
+# the service builds from its own folder with its own Gradle wrapper.
+name: kotlin-service
+
+on:
+  workflow_call:
+    inputs:
+      service:
+        description: Folder name under services/
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    name: build, unit + integration tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: services/${{ inputs.service }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+      # build = compile + unit tests + ArchUnit + bootJar; integrationTest = Testcontainers (Docker on the runner)
+      - name: Build and unit tests
+        run: ./gradlew build --no-daemon
+      - name: Integration tests
+        run: ./gradlew integrationTest --no-daemon
+      - name: Upload test reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-${{ inputs.service }}
+          path: services/${{ inputs.service }}/build/reports
+          retention-days: 7
+
+  image:
+    name: image build
+    needs: build-test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Build image (not pushed; no registry configured yet)
+        uses: docker/build-push-action@v6
+        with:
+          context: services/${{ inputs.service }}
+          build-contexts: contracts=contracts
+          push: false
+          tags: commerceflow/${{ inputs.service }}:${{ github.sha }}
+          cache-from: type=gha,scope=${{ inputs.service }}
+          cache-to: type=gha,mode=max,scope=${{ inputs.service }}

@@ -1,0 +1,38 @@
+# CI for payment-service only. Generated layout: path filters = own folder, the contracts it
+# produces or consumes, its own workflow and the reusable template.
+name: payment-service
+
+on:
+  pull_request:
+    paths:
+      - "services/payment-service/**"
+      - "contracts/events/common/**"
+      - "contracts/events/payment/**"
+      - "contracts/events/order/**"
+      - "contracts/openapi/payment-service.*"
+      - ".github/workflows/payment-service.yml"
+      - ".github/workflows/_kotlin-service.yml"
+  push:
+    branches: [main]
+    paths:
+      - "services/payment-service/**"
+      - "contracts/events/common/**"
+      - "contracts/events/payment/**"
+      - "contracts/events/order/**"
+      - "contracts/openapi/payment-service.*"
+      - ".github/workflows/payment-service.yml"
+      - ".github/workflows/_kotlin-service.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: payment-service-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    uses: ./.github/workflows/_kotlin-service.yml
+    with:
+      service: payment-service

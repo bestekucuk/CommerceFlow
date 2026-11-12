@@ -1,0 +1,42 @@
+# CI for notification-service only. Generated layout: path filters = own folder, the contracts it
+# produces or consumes, its own workflow and the reusable template.
+name: notification-service
+
+on:
+  pull_request:
+    paths:
+      - "services/notification-service/**"
+      - "contracts/events/common/**"
+      - "contracts/events/customer/**"
+      - "contracts/events/order/**"
+      - "contracts/events/payment/**"
+      - "contracts/events/shipment/**"
+      - "contracts/openapi/notification-service.*"
+      - ".github/workflows/notification-service.yml"
+      - ".github/workflows/_go-service.yml"
+  push:
+    branches: [main]
+    paths:
+      - "services/notification-service/**"
+      - "contracts/events/common/**"
+      - "contracts/events/customer/**"
+      - "contracts/events/order/**"
+      - "contracts/events/payment/**"
+      - "contracts/events/shipment/**"
+      - "contracts/openapi/notification-service.*"
+      - ".github/workflows/notification-service.yml"
+      - ".github/workflows/_go-service.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: notification-service-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    uses: ./.github/workflows/_go-service.yml
+    with:
+      service: notification-service

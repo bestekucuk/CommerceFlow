@@ -1,0 +1,38 @@
+# CI for pricing-service only. Generated layout: path filters = own folder, the contracts it
+# produces or consumes, its own workflow and the reusable template.
+name: pricing-service
+
+on:
+  pull_request:
+    paths:
+      - "services/pricing-service/**"
+      - "contracts/events/common/**"
+      - "contracts/events/price/**"
+      - "contracts/events/product/**"
+      - "contracts/openapi/pricing-service.*"
+      - ".github/workflows/pricing-service.yml"
+      - ".github/workflows/_kotlin-service.yml"
+  push:
+    branches: [main]
+    paths:
+      - "services/pricing-service/**"
+      - "contracts/events/common/**"
+      - "contracts/events/price/**"
+      - "contracts/events/product/**"
+      - "contracts/openapi/pricing-service.*"
+      - ".github/workflows/pricing-service.yml"
+      - ".github/workflows/_kotlin-service.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: pricing-service-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    uses: ./.github/workflows/_kotlin-service.yml
+    with:
+      service: pricing-service

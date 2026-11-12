@@ -19,8 +19,9 @@ it depends on change, and deploys only itself.
 ## Prerequisites
 
 - Service builds and tests from its folder.
-- No remote is configured yet: workflows can be written and linted locally
-  (`actionlint`), but nothing is pushed or run on GitHub until the user adds a remote.
+- Remote `origin` is GitHub. Lint workflows locally with `actionlint` (for example
+  `docker run --rm -v <repo>:/repo -w /repo rhysd/actionlint:1.7.7`); they run on GitHub
+  only after the user pushes. Claude never pushes.
 - Owner: `devops-engineer`.
 
 ## Concepts and architecture
@@ -109,7 +110,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
-        with: { distribution: temurin, java-version: "21" }
+        with: { distribution: temurin, java-version: "17" }
       - uses: gradle/actions/setup-gradle@v4
       - run: ./gradlew build --no-daemon      # unit + Testcontainers integration + ArchUnit
       - uses: actions/upload-artifact@v4

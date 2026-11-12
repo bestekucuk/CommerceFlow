@@ -15,7 +15,7 @@ Generated from one data source; IDs `CF-0xx` keep the numbers already used in `d
 | **M8** Storefront usable | 9 | Customer browse → checkout → order status | 0/5 | ⬜ Not started |
 | **M9** Quality gates | 10 | All test layers in CI or nightly | 0/7 | 🟡 In progress |
 | **M10** Operable and secure | 11 | Traces/dashboards/alerts/SLOs, scanning, audit with no open high findings | 0/5 | ⬜ Not started |
-| **M11** Production ready | 12 | Per-component pipelines, Helm/Kubernetes, DR and retention | 0/18 | ⬜ Not started |
+| **M11** Production ready | 12 | Per-component pipelines, Helm/Kubernetes, DR and retention | 0/18 | 🟡 In progress |
 
 A milestone is reached only when every task in its phases is ✅ Done with evidence. No milestone is reached yet: M1 has open items
  ([CF-001](TASKS.md#cf-001), [CF-003](TASKS.md#cf-003), [CF-036](TASKS.md#cf-036)).

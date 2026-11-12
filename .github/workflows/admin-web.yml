@@ -1,0 +1,42 @@
+# CI for admin-web only. Generated layout: path filters = own folder, the contracts it
+# produces or consumes, its own workflow and the reusable template.
+name: admin-web
+
+on:
+  pull_request:
+    paths:
+      - "apps/admin-web/**"
+      - "contracts/openapi/product-service.*"
+      - "contracts/openapi/pricing-service.*"
+      - "contracts/openapi/inventory-service.*"
+      - "contracts/openapi/order-service.*"
+      - "contracts/openapi/shipping-service.*"
+      - "contracts/openapi/customer-service.*"
+      - ".github/workflows/admin-web.yml"
+      - ".github/workflows/_web-app.yml"
+  push:
+    branches: [main]
+    paths:
+      - "apps/admin-web/**"
+      - "contracts/openapi/product-service.*"
+      - "contracts/openapi/pricing-service.*"
+      - "contracts/openapi/inventory-service.*"
+      - "contracts/openapi/order-service.*"
+      - "contracts/openapi/shipping-service.*"
+      - "contracts/openapi/customer-service.*"
+      - ".github/workflows/admin-web.yml"
+      - ".github/workflows/_web-app.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: admin-web-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    uses: ./.github/workflows/_web-app.yml
+    with:
+      app: admin-web

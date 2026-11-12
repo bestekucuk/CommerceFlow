@@ -1,0 +1,53 @@
+# Checks the shared contracts. Component pipelines are triggered separately by their own
+# path filters when a contract they produce or consume changes.
+name: contracts
+
+on:
+  pull_request:
+    paths:
+      - "contracts/**"
+      - "tests/contract/avro/**"
+      - ".github/workflows/contracts.yml"
+  push:
+    branches: [main]
+    paths:
+      - "contracts/**"
+      - "tests/contract/avro/**"
+      - ".github/workflows/contracts.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: contracts-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  avro:
+    name: Avro schemas parse and follow conventions
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install avro==1.11.3
+      - run: python tests/contract/avro/check_schemas.py contracts/events
+
+  openapi:
+    name: OpenAPI specs lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Lint every spec
+        run: |
+          shopt -s nullglob
+          specs=(contracts/openapi/*.yaml)
+          if [ ${#specs[@]} -eq 0 ]; then echo "no specs"; exit 0; fi
+          npx --yes @redocly/cli@1.25.11 lint "${specs[@]}"

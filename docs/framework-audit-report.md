@@ -112,7 +112,7 @@ and the affected tests were rerun afterwards.
 | 5 | minor | inventory: SKU already owned by another product was silently accepted | `CreateStockItems` returns `ErrInvalidEvent` → DLT | IT |
 | 6 | minor | readiness DOWN while retrying not documented | documented as a deliberate choice in `services/inventory-service/README.md` | — |
 | 7 | minor | OTel Java agent downloaded without integrity check | `ADD --checksum=sha256:fa039f86…7d5b` in the product Dockerfile | image rebuilt, container healthy, E2E PASS |
-| 8 | minor | no outbox/inbox cleanup | backlog item CF-084 | `backlog/TASKS.md` |
+| 8 | minor | no outbox/inbox cleanup | backlog item CF-094 | `backlog/TASKS.md` |
 | 9 | minor | APIs have no authentication | already planned (CF-065, CF-068); OpenAPI declares `security: []` explicitly | — |
 
 Note on 7: the checksum was taken from the agent already downloaded into the previous
@@ -160,7 +160,7 @@ image (trust on first use); it was not compared against an upstream-published di
 6. `contracts/openapi/product-service.v1.yaml` added and linted (Redocly: valid, 2 accepted warnings: local server URL, no license).
 7. product-service image: `/otel` directory permissions; Compose health check using `curl` instead of `/dev/tcp`.
 8. Code-review fixes in section 8 (UUID validation, rebalance during retries, pinned writer schema, per-record shutdown, SKU ownership, OTel agent checksum, readiness note).
-9. Backlog statuses updated with evidence (13 Done, 5 In progress); CF-084 added; dependencies of CF-044/CF-045 narrowed to what the slice actually needed.
+9. Backlog statuses updated with evidence (13 Done, 5 In progress); CF-094 added; dependencies of CF-044/CF-045 narrowed to what the slice actually needed.
 
 No destructive change was made. Nothing was deleted except the earlier, user-approved
 build-output cleanup.

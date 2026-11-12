@@ -1,0 +1,36 @@
+# CI for customer-service only. Generated layout: path filters = own folder, the contracts it
+# produces or consumes, its own workflow and the reusable template.
+name: customer-service
+
+on:
+  pull_request:
+    paths:
+      - "services/customer-service/**"
+      - "contracts/events/common/**"
+      - "contracts/events/customer/**"
+      - "contracts/openapi/customer-service.*"
+      - ".github/workflows/customer-service.yml"
+      - ".github/workflows/_kotlin-service.yml"
+  push:
+    branches: [main]
+    paths:
+      - "services/customer-service/**"
+      - "contracts/events/common/**"
+      - "contracts/events/customer/**"
+      - "contracts/openapi/customer-service.*"
+      - ".github/workflows/customer-service.yml"
+      - ".github/workflows/_kotlin-service.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: customer-service-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    uses: ./.github/workflows/_kotlin-service.yml
+    with:
+      service: customer-service

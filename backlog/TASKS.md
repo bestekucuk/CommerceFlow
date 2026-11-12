@@ -3,7 +3,7 @@
 Status legend: ✅ Done = verified in this repository (evidence given) · 🟡 In progress · ⛔ Blocked · ⬜ Not started.
 Generated from one data source; IDs `CF-0xx` keep the numbers already used in `docs/`. Snapshot: 2026-11-12.
 
-83 tasks — ✅ Done: 13, 🟡 In progress: 5, ⛔ Blocked: 1, ⬜ Not started: 64
+83 tasks — ✅ Done: 13, 🟡 In progress: 7, ⛔ Blocked: 0, ⬜ Not started: 63
 
 Every task also meets the general [Definition of Done](DEFINITION-OF-DONE.md).
 
@@ -778,13 +778,13 @@ Every task also meets the general [Definition of Done](DEFINITION-OF-DONE.md).
 
 - security-audit on PII fields
 
-### CF-084
+### CF-094
 
 **Outbox and inbox retention jobs**
 
 | Field | Value |
 |---|---|
-| Task ID | CF-084 |
+| Task ID | CF-094 |
 | Status | ⬜ Not started — raised by the Prompt 09 code review (2026-11-12) |
 | Epic / feature | CF-EPIC-06 / F-11 Stock projection and adjustments |
 | Owning service or application | `services/*` |
@@ -1662,7 +1662,7 @@ Every task also meets the general [Definition of Done](DEFINITION-OF-DONE.md).
 | Field | Value |
 |---|---|
 | Task ID | CF-020 |
-| Status | ⛔ Blocked — blocked: repository has no remote (only the user adds one) |
+| Status | 🟡 In progress — _kotlin-service, _go-service, _web-app + 10 callers + contracts.yml written; actionlint 1.7.7: 0 errors in 14 files (2026-11-12); Avro check passes and fails a seeded bad schema; first GitHub runs pending the owner's push |
 | Epic / feature | CF-EPIC-18 / F-28 CI/CD per component |
 | Owning service or application | `.github/workflows` |
 | Priority | P1 |
@@ -2077,7 +2077,7 @@ Every task also meets the general [Definition of Done](DEFINITION-OF-DONE.md).
 | Field | Value |
 |---|---|
 | Task ID | CF-080 |
-| Status | ⬜ Not started |
+| Status | 🟡 In progress — path filters per component include consumed/produced contract folders from the event catalogue; parity test with affected-components.ps1 not written |
 | Epic / feature | CF-EPIC-18 / F-28 CI/CD per component |
 | Owning service or application | `.github/workflows` |
 | Priority | P1 |

@@ -1,7 +1,10 @@
 # Build and release strategy
 
-Status: **planned**. No build files, workflows or images exist yet. The repository has no
-remote, so no CI can run. Decision: ADR-0011.
+Status: **partly implemented** (2026-11-12). Per-component builds, tests and images exist
+(`docs/service-catalog.md`). GitHub Actions CI exists for every component (build, unit and
+integration tests, image build without push) and for the contracts (Avro conventions,
+OpenAPI lint); workflows pass `actionlint`. Planned: scans, Pact, Avro compatibility
+against a registry, image push, Helm deployment. Decision: ADR-0011.
 
 ## Build per component
 
@@ -36,6 +39,20 @@ Path filters: the component folder, the contracts it produces or consumes (from
 `docs/event-catalog/README.md`), its OpenAPI spec, and its workflow file.
 `scripts/affected-components.ps1` implements the same mapping locally.
 
+Implemented workflows (`.github/workflows/`):
+
+| Workflow | Runs | Jobs |
+|---|---|---|
+| `_kotlin-service.yml` (reusable) | called by the 5 Kotlin services | `./gradlew build`, `./gradlew integrationTest`, image build |
+| `_go-service.yml` (reusable) | called by the 3 Go services | `make lint test integration build`, image build |
+| `_web-app.yml` (reusable) | called by the 2 apps | `npm ci`, typecheck, Vitest, build, image build |
+| `<component>.yml` (10) | pull request / push to `main` matching its path filters; manual | the template above |
+| `contracts.yml` | changes under `contracts/` | `tests/contract/avro/check_schemas.py`, Redocly lint |
+
+The reusable workflows share CI steps, not code: each component still builds only from its
+own folder. Images are built but not pushed until a registry exists (CF-004). The full
+pipeline in the diagram (scans, Pact, push, deploy) is the target, not yet implemented.
+
 ## Release rules
 
 1. Images are immutable and promoted (same digest staging → production).
@@ -48,7 +65,8 @@ Path filters: the component folder, the contracts it produces or consumes (from
 3. Rollback = redeploy the previous image. This is safe because migrations are
    expand-only within a release.
 4. No release train: services release at their own pace.
-5. Claude never pushes, merges, deploys or triggers workflows (guard hook, settings deny).
+5. Claude never pushes, merges or deploys (guard hook, settings deny); workflows run on
+   pushes the user makes.
 
 ## Versioning
 
@@ -62,6 +80,6 @@ Path filters: the component folder, the contracts it produces or consumes (from
 
 ## Open items
 
-Container registry (CF-004), deployment approvals and environment protection (once a
-remote exists), feature-flag tooling (not decided; only needed when a change cannot be
+Container registry (CF-004), deployment approvals and environment protection (CF-084…CF-093),
+scans (CF-070), Avro compatibility in CI (CF-040), Playwright and the cross-service E2E in CI, feature-flag tooling (not decided; only needed when a change cannot be
 made backward compatible).

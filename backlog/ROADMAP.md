@@ -3,7 +3,7 @@
 Status legend: ✅ Done = verified in this repository (evidence given) · 🟡 In progress · ⛔ Blocked · ⬜ Not started.
 Generated from one data source; IDs `CF-0xx` keep the numbers already used in `docs/`. Snapshot: 2026-11-12.
 
-83 tasks — ✅ Done: 13, 🟡 In progress: 5, ⛔ Blocked: 1, ⬜ Not started: 64
+83 tasks — ✅ Done: 13, 🟡 In progress: 7, ⛔ Blocked: 0, ⬜ Not started: 63
 
 Phases are ordered by dependency, not by calendar; no dates are committed. The vertical slice (phases 3–7) is prioritised over breadth.
 
@@ -20,7 +20,7 @@ Phases are ordered by dependency, not by calendar; no dates are committed. The v
 | 9. Storefront | Customers browse, check out and track orders. | 5 | 0 | ⬜ Not started |
 | 10. Complete testing | All test layers in place: architecture, contract, integration, E2E, performance baselines, resilience. | 7 | 0 | 🟡 In progress |
 | 11. Observability and security | Tracing across async hops, dashboards, alerts, SLOs; security scanning and audits. | 5 | 0 | ⬜ Not started |
-| 12. Kubernetes and production readiness | Per-component CI/CD, Helm/Kubernetes, Terraform, DR and retention ready for a first environment. | 18 | 0 | ⬜ Not started |
+| 12. Kubernetes and production readiness | Per-component CI/CD, Helm/Kubernetes, Terraform, DR and retention ready for a first environment. | 18 | 0 | 🟡 In progress |
 
 ## Phase 1 — Engineering foundation
 
@@ -81,7 +81,7 @@ Inventory and pricing consume product events idempotently; customer profile exis
 | [CF-047](TASKS.md#cf-047) | inventory-service: stock adjustment API | `services/inventory-service` | P1 | ⬜ Not started |
 | [CF-050](TASKS.md#cf-050) | customer-service: profile and address API | `services/customer-service` | P1 | ⬜ Not started |
 | [CF-051](TASKS.md#cf-051) | customer-service: CustomerRegistered / CustomerContactChanged | `services/customer-service` | P1 | ⬜ Not started |
-| [CF-084](TASKS.md#cf-084) | Outbox and inbox retention jobs | `services/*` | P1 | ⬜ Not started |
+| [CF-094](TASKS.md#cf-094) | Outbox and inbox retention jobs | `services/*` | P1 | ⬜ Not started |
 
 ## Phase 6 — Order and Payment
 
@@ -145,7 +145,7 @@ All test layers in place: architecture, contract, integration, E2E, performance 
 | Task | Title | Owner | Priority | Status |
 |---|---|---|---|---|
 | [CF-017](TASKS.md#cf-017) | Pact consumer/provider and broker | `apps, services, tests/contract` | P1 | ⬜ Not started |
-| [CF-020](TASKS.md#cf-020) | Reusable CI workflows per language | `.github/workflows` | P1 | ⛔ Blocked |
+| [CF-020](TASKS.md#cf-020) | Reusable CI workflows per language | `.github/workflows` | P1 | 🟡 In progress |
 | [CF-022](TASKS.md#cf-022) | Architecture tests in every service | `services/*` | P1 | 🟡 In progress |
 | [CF-076](TASKS.md#cf-076) | Cross-service integration suite | `tests/integration` | P1 | ⬜ Not started |
 | [CF-078](TASKS.md#cf-078) | Resilience scenario catalogue R1-R6 | `tests/resilience` | P1 | ⬜ Not started |
@@ -173,7 +173,7 @@ Per-component CI/CD, Helm/Kubernetes, Terraform, DR and retention ready for a fi
 | [CF-019](TASKS.md#cf-019) | Helm chart template and per-service values | `infrastructure/kubernetes` | P1 | ⬜ Not started |
 | [CF-026](TASKS.md#cf-026) | Data retention with legal input | `docs, services` | P1 | ⬜ Not started |
 | [CF-027](TASKS.md#cf-027) | RPO/RTO, backups and restore drills | `infrastructure` | P1 | ⬜ Not started |
-| [CF-080](TASKS.md#cf-080) | Dependency-aware CI triggering | `.github/workflows` | P1 | ⬜ Not started |
+| [CF-080](TASKS.md#cf-080) | Dependency-aware CI triggering | `.github/workflows` | P1 | 🟡 In progress |
 | [CF-081](TASKS.md#cf-081) | Kubernetes base: namespaces, network policies, quotas | `infrastructure/kubernetes` | P1 | ⬜ Not started |
 | [CF-083](TASKS.md#cf-083) | Production Debezium: heartbeats, failover slots, Connect HA | `infrastructure/debezium` | P1 | ⬜ Not started |
 | [CF-084](TASKS.md#cf-084) | product-service: own CI pipeline, image publish and staged deployment | `services/product-service` | P1 | ⬜ Not started |
@@ -191,8 +191,8 @@ Per-component CI/CD, Helm/Kubernetes, Terraform, DR and retention ready for a fi
 
 ## Recommended next executable task
 
-1. **[CF-005](TASKS.md#cf-005) — finish verifying the local stack** (files are written; the first start was interrupted by a Docker Engine error). Restart Docker Desktop, then `infrastructure/scripts/up.ps1` and `health.ps1`. It unblocks 52 tasks, including the CDC verification [CF-037](TASKS.md#cf-037).
+1. **[CF-005](TASKS.md#cf-005) — finish verifying the local stack** (files are written; the first start was interrupted by a Docker Engine error). Restart Docker Desktop, then `infrastructure/scripts/up.ps1` and `health.ps1`. It unblocks 53 tasks, including the CDC verification [CF-037](TASKS.md#cf-037).
 2. In parallel, without Docker: **[CF-002](TASKS.md#cf-002) — v1 Avro schemas** (`/create-domain-event`, agent `event-driven-engineer`). It is P0, all its dependencies are done, and it unblocks 30 tasks on the vertical slice.
 3. Then **[CF-003](TASKS.md#cf-003)** (codegen) and **[CF-043](TASKS.md#cf-043)** (product API) to complete phase 4 inputs.
 
-Also ready: [CF-052](TASKS.md#cf-052), [CF-001](TASKS.md#cf-001), [CF-065](TASKS.md#cf-065), [CF-050](TASKS.md#cf-050), [CF-038](TASKS.md#cf-038), [CF-047](TASKS.md#cf-047), [CF-019](TASKS.md#cf-019), [CF-012](TASKS.md#cf-012), [CF-042](TASKS.md#cf-042), [CF-022](TASKS.md#cf-022), [CF-084](TASKS.md#cf-084), [CF-039](TASKS.md#cf-039), [CF-036](TASKS.md#cf-036).
+Also ready: [CF-052](TASKS.md#cf-052), [CF-001](TASKS.md#cf-001), [CF-065](TASKS.md#cf-065), [CF-050](TASKS.md#cf-050), [CF-038](TASKS.md#cf-038), [CF-047](TASKS.md#cf-047), [CF-020](TASKS.md#cf-020), [CF-019](TASKS.md#cf-019), [CF-012](TASKS.md#cf-012), [CF-042](TASKS.md#cf-042), [CF-022](TASKS.md#cf-022), [CF-094](TASKS.md#cf-094), [CF-039](TASKS.md#cf-039), [CF-036](TASKS.md#cf-036).

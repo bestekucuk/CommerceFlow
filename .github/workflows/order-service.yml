@@ -1,0 +1,42 @@
+# CI for order-service only. Generated layout: path filters = own folder, the contracts it
+# produces or consumes, its own workflow and the reusable template.
+name: order-service
+
+on:
+  pull_request:
+    paths:
+      - "services/order-service/**"
+      - "contracts/events/common/**"
+      - "contracts/events/order/**"
+      - "contracts/events/inventory/**"
+      - "contracts/events/payment/**"
+      - "contracts/events/shipment/**"
+      - "contracts/openapi/order-service.*"
+      - ".github/workflows/order-service.yml"
+      - ".github/workflows/_kotlin-service.yml"
+  push:
+    branches: [main]
+    paths:
+      - "services/order-service/**"
+      - "contracts/events/common/**"
+      - "contracts/events/order/**"
+      - "contracts/events/inventory/**"
+      - "contracts/events/payment/**"
+      - "contracts/events/shipment/**"
+      - "contracts/openapi/order-service.*"
+      - ".github/workflows/order-service.yml"
+      - ".github/workflows/_kotlin-service.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: order-service-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    uses: ./.github/workflows/_kotlin-service.yml
+    with:
+      service: order-service

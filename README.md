@@ -42,8 +42,6 @@ Pact, Playwright, k6, Toxiproxy.
 
 ## Remote
 
-No remote is configured. Add one yourself when ready:
-
-```bash
-git remote add origin <url>
-```
+Remote: `origin` → https://github.com/bestekucuk/CommerceFlow (public). Claude adds no
+remotes and never pushes; pushes are made by the owner. CI: `.github/workflows/`
+(see `docs/architecture/build-and-release-strategy.md`).

@@ -1,0 +1,36 @@
+# CI for product-service only. Generated layout: path filters = own folder, the contracts it
+# produces or consumes, its own workflow and the reusable template.
+name: product-service
+
+on:
+  pull_request:
+    paths:
+      - "services/product-service/**"
+      - "contracts/events/common/**"
+      - "contracts/events/product/**"
+      - "contracts/openapi/product-service.*"
+      - ".github/workflows/product-service.yml"
+      - ".github/workflows/_kotlin-service.yml"
+  push:
+    branches: [main]
+    paths:
+      - "services/product-service/**"
+      - "contracts/events/common/**"
+      - "contracts/events/product/**"
+      - "contracts/openapi/product-service.*"
+      - ".github/workflows/product-service.yml"
+      - ".github/workflows/_kotlin-service.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: product-service-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    uses: ./.github/workflows/_kotlin-service.yml
+    with:
+      service: product-service

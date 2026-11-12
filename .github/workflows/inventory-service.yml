@@ -1,0 +1,40 @@
+# CI for inventory-service only. Generated layout: path filters = own folder, the contracts it
+# produces or consumes, its own workflow and the reusable template.
+name: inventory-service
+
+on:
+  pull_request:
+    paths:
+      - "services/inventory-service/**"
+      - "contracts/events/common/**"
+      - "contracts/events/inventory/**"
+      - "contracts/events/product/**"
+      - "contracts/events/order/**"
+      - "contracts/openapi/inventory-service.*"
+      - ".github/workflows/inventory-service.yml"
+      - ".github/workflows/_go-service.yml"
+  push:
+    branches: [main]
+    paths:
+      - "services/inventory-service/**"
+      - "contracts/events/common/**"
+      - "contracts/events/inventory/**"
+      - "contracts/events/product/**"
+      - "contracts/events/order/**"
+      - "contracts/openapi/inventory-service.*"
+      - ".github/workflows/inventory-service.yml"
+      - ".github/workflows/_go-service.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: inventory-service-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    uses: ./.github/workflows/_go-service.yml
+    with:
+      service: inventory-service
