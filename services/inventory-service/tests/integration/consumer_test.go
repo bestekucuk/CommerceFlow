@@ -245,7 +245,7 @@ func TestConsumer_PoisonMessageIsDeadLetteredAndPartitionContinues(t *testing.T)
 	key := uuid(n + 1)
 	rc := startConsumer(t, application.NewRegisterProduct(postgres.NewStore(pool)))
 
-	produce(t, key, []byte("not avro"), "ProductCreated", uuid(n))      // undecodable
+	produce(t, key, []byte("not avro"), "ProductCreated", uuid(n))             // undecodable
 	good := testsupport.ValidEvent(uuid(n+2), key, fmt.Sprintf("SKU-%d-P", n)) // same key -> same partition, after it
 	produceEvent(t, good)
 
