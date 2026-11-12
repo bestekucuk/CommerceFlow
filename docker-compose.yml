@@ -1,0 +1,8 @@
+# CommerceFlow local stack — PLACEHOLDER (CF-005).
+#
+# No services are defined yet. Planned: Kafka (KRaft), Schema Registry, Kafka Connect
+# with Debezium, one PostgreSQL per service, Redis, Toxiproxy, OpenTelemetry Collector,
+# Prometheus, Grafana, Loki, Tempo. Component config lives under infrastructure/.
+name: commerceflow
+
+services: {}

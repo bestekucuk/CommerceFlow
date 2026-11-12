@@ -1,0 +1,51 @@
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+*.iml
+.vscode/*
+!.vscode/extensions.json
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Claude Code local overrides
+.claude/settings.local.json
+
+# Gradle / Kotlin
+.gradle/
+build/
+.kotlin/
+out/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Go
+bin/
+*.exe
+*.test
+coverage.out
+coverage.html
+
+# Node / Vite
+node_modules/
+dist/
+coverage/
+playwright-report/
+test-results/
+*.local
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+
+# Helm
+infrastructure/kubernetes/**/charts/*.tgz
+
+# k6
+tests/performance/results/
