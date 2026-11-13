@@ -9,6 +9,15 @@ spring:
     enabled: true
   lifecycle:
     timeout-per-shutdown-phase: 20s
+  mvc:
+    problemdetails:
+      enabled: true
+  jackson:
+    # money and quantities are integers: 1299.99 or "12" must be rejected, not truncated/coerced
+    deserialization:
+      accept-float-as-int: false
+    mapper:
+      allow-coercion-of-scalars: false
 
 server:
   port: ${PORT:8086}
@@ -31,3 +40,8 @@ management:
       enabled: true
     readinessstate:
       enabled: true
+
+commerceflow:
+  pricing:
+    # how long a quote's prices are guaranteed (ISO-8601 duration)
+    quote-ttl: ${QUOTE_TTL:PT15M}

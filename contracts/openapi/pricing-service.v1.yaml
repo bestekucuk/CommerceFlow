@@ -1,0 +1,238 @@
+openapi: 3.1.0
+info:
+  title: pricing-service
+  version: 1.0.0
+  description: |
+    Prices per SKU and price quotes. A quote freezes the prices of a basket for a limited
+    time; order-service accepts an order only against a valid, unexpired quote, so prices
+    are never taken from the browser (ADR-0012).
+    Authentication is not enforced yet (CF-068); MVP runs on localhost only.
+# Explicitly no authentication yet: JWT resource-server security arrives with CF-068.
+security: []
+servers:
+  - url: http://localhost:8086
+    description: local Compose stack
+paths:
+  /v1/prices:
+    get:
+      operationId: listPrices
+      summary: Get the current prices of several SKUs (unpriced SKUs are omitted)
+      parameters:
+        - name: sku
+          in: query
+          required: true
+          description: Repeat for several SKUs (1-100).
+          schema:
+            type: array
+            minItems: 1
+            maxItems: 100
+            items: { $ref: "#/components/schemas/SkuCode" }
+          style: form
+          explode: true
+        - $ref: "#/components/parameters/CorrelationId"
+      responses:
+        "200":
+          description: Prices found
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: "#/components/schemas/Price" }
+        "400": { $ref: "#/components/responses/Problem" }
+  /v1/prices/{sku}:
+    parameters:
+      - name: sku
+        in: path
+        required: true
+        schema: { $ref: "#/components/schemas/SkuCode" }
+      - $ref: "#/components/parameters/CorrelationId"
+    get:
+      operationId: getPrice
+      summary: Get the current price of a SKU
+      responses:
+        "400": { $ref: "#/components/responses/Problem" }
+        "200":
+          description: The price; ETag carries its version
+          headers:
+            ETag: { $ref: "#/components/headers/ETag" }
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Price" }
+        "404": { $ref: "#/components/responses/Problem" }
+    put:
+      operationId: setPrice
+      summary: Set the price of a SKU (create, or update with If-Match)
+      description: |
+        Creating a price needs no precondition. Updating an existing price requires
+        `If-Match` with the ETag from GET (optimistic concurrency): 428 when it is missing,
+        412 when another update came first. `If-Match: *` matches any existing price; a list
+        of strong ETags is accepted; weak ETags (W/) never match.
+      parameters:
+        - name: If-Match
+          in: header
+          required: false
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SetPriceRequest" }
+            example: { amountMinor: 129900, currency: TRY }
+      responses:
+        "200":
+          description: Updated
+          headers:
+            ETag: { $ref: "#/components/headers/ETag" }
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Price" }
+        "201":
+          description: Created
+          headers:
+            ETag: { $ref: "#/components/headers/ETag" }
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Price" }
+        "400": { $ref: "#/components/responses/Problem" }
+        "412": { $ref: "#/components/responses/Problem" }
+        "428": { $ref: "#/components/responses/Problem" }
+  /v1/quotes:
+    post:
+      operationId: createQuote
+      summary: Price a basket and freeze the result for a limited time
+      parameters:
+        - $ref: "#/components/parameters/CorrelationId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateQuoteRequest" }
+            example:
+              lines:
+                - { sku: SHOE-42, quantity: 1 }
+      responses:
+        "201":
+          description: Created
+          headers:
+            Location: { schema: { type: string }, description: "/v1/quotes/{id}" }
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Quote" }
+        "400": { $ref: "#/components/responses/Problem" }
+        "422": { $ref: "#/components/responses/Problem" }
+  /v1/quotes/{id}:
+    get:
+      operationId: getQuote
+      summary: Get a quote (also after it expired; check expiresAt)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+        - $ref: "#/components/parameters/CorrelationId"
+      responses:
+        "200":
+          description: The quote
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Quote" }
+        "400": { $ref: "#/components/responses/Problem" }
+        "404": { $ref: "#/components/responses/Problem" }
+components:
+  parameters:
+    CorrelationId:
+      name: X-Correlation-Id
+      in: header
+      required: false
+      description: Client correlation id (1-64 of A-Z a-z 0-9 . _ -). Generated when absent.
+      schema: { type: string, pattern: "^[A-Za-z0-9._-]{1,64}$" }
+  headers:
+    ETag:
+      description: Quoted price version, e.g. "3"; send it back in If-Match
+      schema: { type: string }
+  responses:
+    Problem:
+      description: |
+        RFC 9457 problem details: invalid-request 400, not-found 404, precondition-failed 412,
+        precondition-required 428, unpriced-sku 422 (property `skus`), mixed-currency 422
+      content:
+        application/problem+json:
+          schema: { $ref: "#/components/schemas/Problem" }
+  schemas:
+    SkuCode:
+      type: string
+      pattern: "^[A-Z0-9][A-Z0-9-]{2,39}$"
+    Money:
+      type: object
+      required: [amountMinor, currency]
+      properties:
+        amountMinor: { type: integer, format: int64, minimum: 0, maximum: 10000000000000, description: "Minor units, e.g. 129900 = 1299.00. Decimals and strings are rejected (400)" }
+        currency: { type: string, pattern: "^[A-Z]{3}$", description: ISO 4217 }
+    SetPriceRequest:
+      $ref: "#/components/schemas/Money"
+    Price:
+      type: object
+      required: [sku, price, version, updatedAt]
+      properties:
+        sku: { $ref: "#/components/schemas/SkuCode" }
+        price: { $ref: "#/components/schemas/Money" }
+        version: { type: integer }
+        updatedAt: { type: string, format: date-time }
+    CreateQuoteRequest:
+      type: object
+      required: [lines]
+      properties:
+        lines:
+          type: array
+          minItems: 1
+          maxItems: 50
+          description: Each SKU at most once
+          items:
+            type: object
+            required: [sku, quantity]
+            properties:
+              sku: { $ref: "#/components/schemas/SkuCode" }
+              quantity: { type: integer, minimum: 1, maximum: 99 }
+    Total:
+      type: object
+      description: A sum of prices (line or quote total); not capped like a price
+      required: [amountMinor, currency]
+      properties:
+        amountMinor: { type: integer, format: int64, minimum: 0 }
+        currency: { type: string, pattern: "^[A-Z]{3}$" }
+    Quote:
+      type: object
+      required: [id, lines, total, createdAt, expiresAt, expired]
+      properties:
+        id: { type: string, format: uuid }
+        lines:
+          type: array
+          items:
+            type: object
+            required: [sku, quantity, unitPrice, lineTotal]
+            properties:
+              sku: { $ref: "#/components/schemas/SkuCode" }
+              quantity: { type: integer }
+              unitPrice: { $ref: "#/components/schemas/Money" }
+              lineTotal: { $ref: "#/components/schemas/Total" }
+        total: { $ref: "#/components/schemas/Total" }
+        createdAt: { type: string, format: date-time }
+        expiresAt: { type: string, format: date-time }
+        expired: { type: boolean, description: "Computed by pricing-service at response time; order-service rejects expired quotes" }
+    Problem:
+      type: object
+      properties:
+        type: { type: string, format: uri }
+        title: { type: string }
+        status: { type: integer }
+        detail: { type: [string, "null"] }
+        instance: { type: string }
+        correlationId: { type: string }
+        skus:
+          type: array
+          items: { type: string }
+          description: Present on unpriced-sku

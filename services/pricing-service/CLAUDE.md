@@ -34,7 +34,7 @@ src/main/kotlin/com/commerceflow/pricing/
   infrastructure/  persistence, outbox writer, Kafka, HTTP clients, Spring config
   presentation/    REST controllers, DTOs, problem details
 src/main/resources/application.yml
-src/main/resources/db/migration/   Flyway (V1 = outbox, inbox)
+src/main/resources/db/migration/   Flyway (V1 = outbox, inbox; V2 = price, quote, quote_line)
 src/test/kotlin/com/commerceflow/pricing/
   ArchitectureTest.kt      layer and cross-service rules (unit)
   ApplicationHealthIT.kt   Testcontainers, tag "integration"
@@ -58,4 +58,8 @@ Build: `./gradlew build` (unit), `./gradlew integrationTest` (Docker). Follow th
 
 ## Status
 
-Buildable scaffold — health/readiness, Flyway baseline, tests. No business logic yet.
+Implemented (MVP): prices per SKU (`PUT/GET /v1/prices`, ETag/If-Match, list) and quotes
+(`POST/GET /v1/quotes`, stored, TTL), Flyway V2 (`price`, `quote`, `quote_line`), problem
+details, correlation id. Tests: domain + use case (unit), ArchUnit, PricingApiIT
+(Testcontainers). Not yet: ProductCreated consumer, ProductPriceChanged outbox, Redis cache,
+authentication (CF-068).
