@@ -1,8 +1,11 @@
 # Event catalogue (detailed)
 
-Status: **ProductCreated v1 implemented** (schema in `contracts/events/product/`, produced
-by product-service, consumed by inventory-service); all other events are **planned**
-definitions for CF-002. The summary table used by tooling is in [README.md](README.md).
+Status: **ProductCreated v1 implemented** (produced by product-service, consumed by
+inventory-service). **Schemas written and registered locally, no producer or consumer yet**
+(MVP saga, CF-002): `Money`, ReserveInventory, ReleaseInventory, StockReserved,
+StockReservationFailed, StockReleased, AuthorizePayment, VoidPayment, PaymentAuthorized,
+PaymentFailed, PaymentVoided, OrderCreated, OrderConfirmed, OrderRejected. All other events
+are **planned** definitions. The summary table used by tooling is in [README.md](README.md).
 
 ## 1. Rules that apply to every event
 
@@ -170,8 +173,8 @@ reason: enum ReleaseReason { SAGA_COMPENSATION, ORDER_CANCELLED, EXPIRED, UNKNOW
 
 ```text
 orderId: uuid
-customerId: uuid
-lines: array<record OrderLine { sku: string, quantity: int, unitPrice: Money }>
+customerId: uuid?             # null for guest checkout (ADR-0012); e-mail and address stay in order-service
+lines: array<record OrderCreatedLine { sku: string, quantity: int, unitPrice: Money }>
 total: Money
 quoteId: uuid
 ```
@@ -191,12 +194,12 @@ quoteId: uuid
 
 ```text
 orderId: uuid
-customerId: uuid
+customerId: uuid?             # null for guest checkout (ADR-0012)
 reservationId: uuid
 paymentId: uuid
-lines: array<OrderLine>
+lines: array<record OrderConfirmedLine { sku: string, quantity: int, unitPrice: Money }>
 total: Money
-shippingAddressId: uuid       # reference into customer-service; shipping receives the address via API or a later contract change (open)
+# no address: how shipping obtains it is still open (section 5); added later as an optional field
 ```
 
 ### 2.9 OrderCancelled
@@ -330,9 +333,9 @@ their schemas are written.
 | ProductDiscontinued | product-service | productId | Stop pricing and selling a product |
 | CustomerRegistered | customer-service | customerId | Welcome notification, contact projection |
 | CustomerContactChanged | customer-service | customerId | Keep notification contacts current |
-| OrderRejected | order-service | orderId | Saga ended without confirmation (stock or payment failed, timeout) |
+| OrderRejected | order-service | orderId | Saga ended without confirmation (stock or payment failed, timeout). **Schema v1 written**: `orderId`, `reason` enum RejectionReason { OUT_OF_STOCK, PAYMENT_FAILED, TIMEOUT, UNKNOWN } |
 | StockLevelChanged | inventory-service | sku | Availability for the catalog read model |
-| PaymentVoided | payment-service | orderId | Reply to `VoidPayment` (also when nothing was authorized) |
+| PaymentVoided | payment-service | orderId | Reply to `VoidPayment` (also when nothing was authorized). **Schema v1 written**: `orderId`, `paymentId?` |
 | ShipmentDispatched | shipping-service | orderId | Parcel handed to carrier |
 
 ## 4. Saga commands
@@ -345,7 +348,15 @@ their schemas are written.
 | VoidPayment | `cf.payment.commands.v1` | orderId | order → payment | PaymentVoided |
 
 Commands use the same envelope; `correlationId` = `orderId`, `causationId` = the event that
-triggered the command.
+triggered the command. Schemas live in the handler's folder (`contracts/events/inventory/`,
+`contracts/events/payment/`), namespace `com.commerceflow.events.<handler aggregate>`.
+
+| Command | Payload (v1, written) |
+|---|---|
+| ReserveInventory | `orderId: uuid`, `lines: array<ReserveLine { sku, quantity: int }>` |
+| ReleaseInventory | `orderId: uuid`, `reason: enum ReleaseRequestReason { SAGA_COMPENSATION, ORDER_CANCELLED, UNKNOWN }` |
+| AuthorizePayment | `orderId: uuid`, `amount: Money`; the command's `eventId` is the provider idempotency key |
+| VoidPayment | `orderId: uuid`, `paymentId: uuid?` (null when no authorization was seen) |
 
 ## 5. Open points
 

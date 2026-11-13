@@ -1,0 +1,41 @@
+{
+  "type": "record",
+  "name": "ReleaseInventory",
+  "namespace": "com.commerceflow.events.inventory",
+  "doc": "Command from the order saga: release the order's reservation (compensation). Topic cf.inventory.commands.v1, key = orderId. Reply: StockReleased, also when nothing was reserved.",
+  "fields": [
+    {
+      "name": "metadata",
+      "type": "com.commerceflow.events.common.EventMetadata"
+    },
+    {
+      "name": "payload",
+      "type": {
+        "type": "record",
+        "name": "ReleaseInventoryPayload",
+        "fields": [
+          {
+            "name": "orderId",
+            "type": {
+              "type": "string",
+              "logicalType": "uuid"
+            }
+          },
+          {
+            "name": "reason",
+            "type": {
+              "type": "enum",
+              "name": "ReleaseRequestReason",
+              "symbols": [
+                "SAGA_COMPENSATION",
+                "ORDER_CANCELLED",
+                "UNKNOWN"
+              ],
+              "default": "UNKNOWN"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

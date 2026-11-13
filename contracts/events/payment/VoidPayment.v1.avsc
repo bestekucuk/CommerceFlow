@@ -1,0 +1,40 @@
+{
+  "type": "record",
+  "name": "VoidPayment",
+  "namespace": "com.commerceflow.events.payment",
+  "doc": "Command from the order saga: void the authorization (compensation). Topic cf.payment.commands.v1, key = orderId. Reply: PaymentVoided, also when nothing was authorized.",
+  "fields": [
+    {
+      "name": "metadata",
+      "type": "com.commerceflow.events.common.EventMetadata"
+    },
+    {
+      "name": "payload",
+      "type": {
+        "type": "record",
+        "name": "VoidPaymentPayload",
+        "fields": [
+          {
+            "name": "orderId",
+            "type": {
+              "type": "string",
+              "logicalType": "uuid"
+            }
+          },
+          {
+            "name": "paymentId",
+            "type": [
+              "null",
+              {
+                "type": "string",
+                "logicalType": "uuid"
+              }
+            ],
+            "doc": "null when the saga never saw an authorization",
+            "default": null
+          }
+        ]
+      }
+    }
+  ]
+}

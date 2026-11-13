@@ -1,0 +1,48 @@
+{
+  "type": "record",
+  "name": "ReserveInventory",
+  "namespace": "com.commerceflow.events.inventory",
+  "doc": "Command from the order saga: reserve stock for every line or none. Topic cf.inventory.commands.v1, key = orderId. Replies: StockReserved or StockReservationFailed.",
+  "fields": [
+    {
+      "name": "metadata",
+      "type": "com.commerceflow.events.common.EventMetadata"
+    },
+    {
+      "name": "payload",
+      "type": {
+        "type": "record",
+        "name": "ReserveInventoryPayload",
+        "fields": [
+          {
+            "name": "orderId",
+            "type": {
+              "type": "string",
+              "logicalType": "uuid"
+            }
+          },
+          {
+            "name": "lines",
+            "type": {
+              "type": "array",
+              "items": {
+                "type": "record",
+                "name": "ReserveLine",
+                "fields": [
+                  {
+                    "name": "sku",
+                    "type": "string"
+                  },
+                  {
+                    "name": "quantity",
+                    "type": "int"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

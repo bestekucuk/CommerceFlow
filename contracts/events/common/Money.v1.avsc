@@ -1,0 +1,18 @@
+{
+  "type": "record",
+  "name": "Money",
+  "namespace": "com.commerceflow.events.common",
+  "doc": "An amount in minor units (cents) and an ISO 4217 currency code. Never a floating-point number.",
+  "fields": [
+    {
+      "name": "amountMinor",
+      "type": "long",
+      "doc": "Amount in the currency's minor unit, e.g. 1999 = 19.99"
+    },
+    {
+      "name": "currency",
+      "type": "string",
+      "doc": "ISO 4217 code, e.g. EUR"
+    }
+  ]
+}

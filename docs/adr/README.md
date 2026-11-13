@@ -16,6 +16,8 @@ Use `0000-template.md` (or `/architecture-decision-records`).
 | [0009](0009-saga-orchestration.md) | Order saga orchestrated by order-service | Proposed |
 | [0010](0010-api-gateway-and-admin-bff.md) | API gateway for client traffic and a BFF for admin-web | Proposed |
 | [0011](0011-independent-service-deployment.md) | Independent build, release and deployment per service | Proposed |
+| [0012](0012-mvp-scope-cart-and-guest-checkout.md) | MVP scope: browser-side cart, guest checkout, no login yet | Accepted (MVP) |
+| [0013](0013-fake-payment-provider-for-mvp.md) | Fake payment provider adapter for the MVP | Accepted (MVP) |
 
 ## By topic
 
@@ -30,3 +32,5 @@ Use `0000-template.md` (or `/architecture-decision-records`).
 | Saga orchestration | 0009 |
 | API gateway and admin BFF | 0010 |
 | Independent service deployment | 0011 |
+| MVP scope: cart, guest checkout, no login | 0012 |
+| Payment provider for the MVP | 0013 |

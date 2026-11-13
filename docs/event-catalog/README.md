@@ -1,7 +1,9 @@
 # Event Catalog — index
 
-Status: **ProductCreated v1 implemented** (product-service → inventory-service); every other
-event below is **planned**.
+Status: **ProductCreated v1 implemented** (product-service → inventory-service). The MVP saga
+messages (Stock*, Payment* except PaymentRefunded, OrderCreated, OrderConfirmed,
+OrderRejected and the four commands) have **v1 schemas written and registered locally**,
+without producers or consumers yet. Every other event below is **planned**.
 
 This folder holds the event architecture. The table below is the **machine-readable
 summary** (parsed by `scripts/affected-components.ps1`; keep the column order). Full

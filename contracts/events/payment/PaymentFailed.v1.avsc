@@ -1,0 +1,50 @@
+{
+  "type": "record",
+  "name": "PaymentFailed",
+  "namespace": "com.commerceflow.events.payment",
+  "doc": "The authorization was declined or failed. Business outcome, not an error. Topic cf.payment.events.v1, key = orderId.",
+  "fields": [
+    {
+      "name": "metadata",
+      "type": "com.commerceflow.events.common.EventMetadata"
+    },
+    {
+      "name": "payload",
+      "type": {
+        "type": "record",
+        "name": "PaymentFailedPayload",
+        "fields": [
+          {
+            "name": "orderId",
+            "type": {
+              "type": "string",
+              "logicalType": "uuid"
+            }
+          },
+          {
+            "name": "paymentId",
+            "type": {
+              "type": "string",
+              "logicalType": "uuid"
+            }
+          },
+          {
+            "name": "reason",
+            "type": {
+              "type": "enum",
+              "name": "PaymentFailureReason",
+              "symbols": [
+                "DECLINED",
+                "INSUFFICIENT_FUNDS",
+                "PROVIDER_ERROR",
+                "TIMEOUT",
+                "UNKNOWN"
+              ],
+              "default": "UNKNOWN"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

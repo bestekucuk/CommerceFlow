@@ -1,0 +1,54 @@
+{
+  "type": "record",
+  "name": "StockReleased",
+  "namespace": "com.commerceflow.events.inventory",
+  "doc": "The order's reservation was released (or there was none). Topic cf.inventory.events.v1, key = orderId.",
+  "fields": [
+    {
+      "name": "metadata",
+      "type": "com.commerceflow.events.common.EventMetadata"
+    },
+    {
+      "name": "payload",
+      "type": {
+        "type": "record",
+        "name": "StockReleasedPayload",
+        "fields": [
+          {
+            "name": "orderId",
+            "type": {
+              "type": "string",
+              "logicalType": "uuid"
+            }
+          },
+          {
+            "name": "reservationId",
+            "type": [
+              "null",
+              {
+                "type": "string",
+                "logicalType": "uuid"
+              }
+            ],
+            "doc": "null when nothing had been reserved",
+            "default": null
+          },
+          {
+            "name": "reason",
+            "type": {
+              "type": "enum",
+              "name": "ReleaseReason",
+              "symbols": [
+                "SAGA_COMPENSATION",
+                "ORDER_CANCELLED",
+                "EXPIRED",
+                "UNKNOWN"
+              ],
+              "default": "UNKNOWN"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

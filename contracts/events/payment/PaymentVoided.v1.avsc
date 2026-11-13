@@ -1,0 +1,40 @@
+{
+  "type": "record",
+  "name": "PaymentVoided",
+  "namespace": "com.commerceflow.events.payment",
+  "doc": "The authorization was voided (or there was none). Topic cf.payment.events.v1, key = orderId.",
+  "fields": [
+    {
+      "name": "metadata",
+      "type": "com.commerceflow.events.common.EventMetadata"
+    },
+    {
+      "name": "payload",
+      "type": {
+        "type": "record",
+        "name": "PaymentVoidedPayload",
+        "fields": [
+          {
+            "name": "orderId",
+            "type": {
+              "type": "string",
+              "logicalType": "uuid"
+            }
+          },
+          {
+            "name": "paymentId",
+            "type": [
+              "null",
+              {
+                "type": "string",
+                "logicalType": "uuid"
+              }
+            ],
+            "doc": "null when nothing had been authorized",
+            "default": null
+          }
+        ]
+      }
+    }
+  ]
+}

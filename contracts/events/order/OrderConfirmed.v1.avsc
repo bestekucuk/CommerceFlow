@@ -1,0 +1,82 @@
+{
+  "type": "record",
+  "name": "OrderConfirmed",
+  "namespace": "com.commerceflow.events.order",
+  "doc": "The saga pivot: stock reserved and payment authorized. Topic cf.order.events.v1, key = orderId.",
+  "fields": [
+    {
+      "name": "metadata",
+      "type": "com.commerceflow.events.common.EventMetadata"
+    },
+    {
+      "name": "payload",
+      "type": {
+        "type": "record",
+        "name": "OrderConfirmedPayload",
+        "fields": [
+          {
+            "name": "orderId",
+            "type": {
+              "type": "string",
+              "logicalType": "uuid"
+            }
+          },
+          {
+            "name": "customerId",
+            "type": [
+              "null",
+              {
+                "type": "string",
+                "logicalType": "uuid"
+              }
+            ],
+            "doc": "null for guest checkout (ADR-0012)",
+            "default": null
+          },
+          {
+            "name": "reservationId",
+            "type": {
+              "type": "string",
+              "logicalType": "uuid"
+            }
+          },
+          {
+            "name": "paymentId",
+            "type": {
+              "type": "string",
+              "logicalType": "uuid"
+            }
+          },
+          {
+            "name": "lines",
+            "type": {
+              "type": "array",
+              "items": {
+                "type": "record",
+                "name": "OrderConfirmedLine",
+                "fields": [
+                  {
+                    "name": "sku",
+                    "type": "string"
+                  },
+                  {
+                    "name": "quantity",
+                    "type": "int"
+                  },
+                  {
+                    "name": "unitPrice",
+                    "type": "com.commerceflow.events.common.Money"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "total",
+            "type": "com.commerceflow.events.common.Money"
+          }
+        ]
+      }
+    }
+  ]
+}

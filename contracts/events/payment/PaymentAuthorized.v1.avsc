@@ -1,0 +1,51 @@
+{
+  "type": "record",
+  "name": "PaymentAuthorized",
+  "namespace": "com.commerceflow.events.payment",
+  "doc": "The amount was authorized. Topic cf.payment.events.v1, key = orderId. No card data.",
+  "fields": [
+    {
+      "name": "metadata",
+      "type": "com.commerceflow.events.common.EventMetadata"
+    },
+    {
+      "name": "payload",
+      "type": {
+        "type": "record",
+        "name": "PaymentAuthorizedPayload",
+        "fields": [
+          {
+            "name": "orderId",
+            "type": {
+              "type": "string",
+              "logicalType": "uuid"
+            }
+          },
+          {
+            "name": "paymentId",
+            "type": {
+              "type": "string",
+              "logicalType": "uuid"
+            }
+          },
+          {
+            "name": "amount",
+            "type": "com.commerceflow.events.common.Money"
+          },
+          {
+            "name": "providerReference",
+            "type": "string",
+            "doc": "Opaque provider id"
+          },
+          {
+            "name": "authorizedAt",
+            "type": {
+              "type": "long",
+              "logicalType": "timestamp-millis"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

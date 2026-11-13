@@ -1,0 +1,62 @@
+{
+  "type": "record",
+  "name": "StockReserved",
+  "namespace": "com.commerceflow.events.inventory",
+  "doc": "Stock for every line of the order is reserved. Topic cf.inventory.events.v1, key = orderId.",
+  "fields": [
+    {
+      "name": "metadata",
+      "type": "com.commerceflow.events.common.EventMetadata"
+    },
+    {
+      "name": "payload",
+      "type": {
+        "type": "record",
+        "name": "StockReservedPayload",
+        "fields": [
+          {
+            "name": "orderId",
+            "type": {
+              "type": "string",
+              "logicalType": "uuid"
+            }
+          },
+          {
+            "name": "reservationId",
+            "type": {
+              "type": "string",
+              "logicalType": "uuid"
+            }
+          },
+          {
+            "name": "lines",
+            "type": {
+              "type": "array",
+              "items": {
+                "type": "record",
+                "name": "ReservedLine",
+                "fields": [
+                  {
+                    "name": "sku",
+                    "type": "string"
+                  },
+                  {
+                    "name": "quantity",
+                    "type": "int"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "expiresAt",
+            "type": {
+              "type": "long",
+              "logicalType": "timestamp-millis"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

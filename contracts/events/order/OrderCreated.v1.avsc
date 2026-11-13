@@ -1,0 +1,75 @@
+{
+  "type": "record",
+  "name": "OrderCreated",
+  "namespace": "com.commerceflow.events.order",
+  "doc": "An order was accepted and its saga started. Topic cf.order.events.v1, key = orderId. No personal data (guest e-mail and address stay in order-service).",
+  "fields": [
+    {
+      "name": "metadata",
+      "type": "com.commerceflow.events.common.EventMetadata"
+    },
+    {
+      "name": "payload",
+      "type": {
+        "type": "record",
+        "name": "OrderCreatedPayload",
+        "fields": [
+          {
+            "name": "orderId",
+            "type": {
+              "type": "string",
+              "logicalType": "uuid"
+            }
+          },
+          {
+            "name": "customerId",
+            "type": [
+              "null",
+              {
+                "type": "string",
+                "logicalType": "uuid"
+              }
+            ],
+            "doc": "null for guest checkout (ADR-0012)",
+            "default": null
+          },
+          {
+            "name": "lines",
+            "type": {
+              "type": "array",
+              "items": {
+                "type": "record",
+                "name": "OrderCreatedLine",
+                "fields": [
+                  {
+                    "name": "sku",
+                    "type": "string"
+                  },
+                  {
+                    "name": "quantity",
+                    "type": "int"
+                  },
+                  {
+                    "name": "unitPrice",
+                    "type": "com.commerceflow.events.common.Money"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "total",
+            "type": "com.commerceflow.events.common.Money"
+          },
+          {
+            "name": "quoteId",
+            "type": {
+              "type": "string",
+              "logicalType": "uuid"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

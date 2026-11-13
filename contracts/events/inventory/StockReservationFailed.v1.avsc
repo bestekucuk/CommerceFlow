@@ -1,0 +1,66 @@
+{
+  "type": "record",
+  "name": "StockReservationFailed",
+  "namespace": "com.commerceflow.events.inventory",
+  "doc": "Stock could not be reserved; nothing was reserved. Business outcome, not an error. Topic cf.inventory.events.v1, key = orderId.",
+  "fields": [
+    {
+      "name": "metadata",
+      "type": "com.commerceflow.events.common.EventMetadata"
+    },
+    {
+      "name": "payload",
+      "type": {
+        "type": "record",
+        "name": "StockReservationFailedPayload",
+        "fields": [
+          {
+            "name": "orderId",
+            "type": {
+              "type": "string",
+              "logicalType": "uuid"
+            }
+          },
+          {
+            "name": "reason",
+            "type": {
+              "type": "enum",
+              "name": "StockFailureReason",
+              "symbols": [
+                "INSUFFICIENT_STOCK",
+                "UNKNOWN_SKU",
+                "SKU_DISCONTINUED",
+                "UNKNOWN"
+              ],
+              "default": "UNKNOWN"
+            }
+          },
+          {
+            "name": "unavailable",
+            "type": {
+              "type": "array",
+              "items": {
+                "type": "record",
+                "name": "UnavailableLine",
+                "fields": [
+                  {
+                    "name": "sku",
+                    "type": "string"
+                  },
+                  {
+                    "name": "requested",
+                    "type": "int"
+                  },
+                  {
+                    "name": "available",
+                    "type": "int"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

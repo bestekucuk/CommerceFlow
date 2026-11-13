@@ -1,0 +1,32 @@
+{
+  "type": "record",
+  "name": "AuthorizePayment",
+  "namespace": "com.commerceflow.events.payment",
+  "doc": "Command from the order saga: authorize the amount. Topic cf.payment.commands.v1, key = orderId. The command's eventId is the provider idempotency key. Replies: PaymentAuthorized or PaymentFailed.",
+  "fields": [
+    {
+      "name": "metadata",
+      "type": "com.commerceflow.events.common.EventMetadata"
+    },
+    {
+      "name": "payload",
+      "type": {
+        "type": "record",
+        "name": "AuthorizePaymentPayload",
+        "fields": [
+          {
+            "name": "orderId",
+            "type": {
+              "type": "string",
+              "logicalType": "uuid"
+            }
+          },
+          {
+            "name": "amount",
+            "type": "com.commerceflow.events.common.Money"
+          }
+        ]
+      }
+    }
+  ]
+}

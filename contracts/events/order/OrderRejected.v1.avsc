@@ -1,0 +1,42 @@
+{
+  "type": "record",
+  "name": "OrderRejected",
+  "namespace": "com.commerceflow.events.order",
+  "doc": "The saga ended without confirmation; all steps were compensated. Topic cf.order.events.v1, key = orderId.",
+  "fields": [
+    {
+      "name": "metadata",
+      "type": "com.commerceflow.events.common.EventMetadata"
+    },
+    {
+      "name": "payload",
+      "type": {
+        "type": "record",
+        "name": "OrderRejectedPayload",
+        "fields": [
+          {
+            "name": "orderId",
+            "type": {
+              "type": "string",
+              "logicalType": "uuid"
+            }
+          },
+          {
+            "name": "reason",
+            "type": {
+              "type": "enum",
+              "name": "RejectionReason",
+              "symbols": [
+                "OUT_OF_STOCK",
+                "PAYMENT_FAILED",
+                "TIMEOUT",
+                "UNKNOWN"
+              ],
+              "default": "UNKNOWN"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
