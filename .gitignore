@@ -52,3 +52,7 @@ tests/performance/results/
 
 # Claude Code hook state (per session)
 .claude/hooks/.state/
+
+# Python bytecode
+__pycache__/
+*.pyc

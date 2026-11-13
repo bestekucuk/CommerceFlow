@@ -17,8 +17,8 @@ Generated from one data source; IDs `CF-0xx` keep the numbers already used in `d
 | F-10 Customer profile | CF-EPIC-05 | [CF-050](TASKS.md#cf-050), [CF-051](TASKS.md#cf-051) | ⬜ Not started |
 | F-11 Stock projection and adjustments | CF-EPIC-06 | [CF-046](TASKS.md#cf-046), [CF-047](TASKS.md#cf-047), [CF-094](TASKS.md#cf-094) | 🟡 In progress |
 | F-12 Reservations for the saga | CF-EPIC-06 | [CF-048](TASKS.md#cf-048), [CF-049](TASKS.md#cf-049) | ⬜ Not started |
-| F-13 Prices and quotes | CF-EPIC-07 | [CF-052](TASKS.md#cf-052), [CF-053](TASKS.md#cf-053) | ⬜ Not started |
-| F-14 Order creation and history | CF-EPIC-08 | [CF-014](TASKS.md#cf-014), [CF-055](TASKS.md#cf-055), [CF-056](TASKS.md#cf-056) | ⬜ Not started |
+| F-13 Prices and quotes | CF-EPIC-07 | [CF-052](TASKS.md#cf-052), [CF-053](TASKS.md#cf-053) | 🟡 In progress |
+| F-14 Order creation and history | CF-EPIC-08 | [CF-014](TASKS.md#cf-014), [CF-055](TASKS.md#cf-055), [CF-056](TASKS.md#cf-056) | 🟡 In progress |
 | F-15 Order saga | CF-EPIC-08 | [CF-010](TASKS.md#cf-010), [CF-011](TASKS.md#cf-011), [CF-059](TASKS.md#cf-059), [CF-062](TASKS.md#cf-062) | ⬜ Not started |
 | F-16 Payment authorization and compensation | CF-EPIC-09 | [CF-016](TASKS.md#cf-016), [CF-057](TASKS.md#cf-057) | ⬜ Not started |
 | F-17 Shipments | CF-EPIC-10 | [CF-060](TASKS.md#cf-060), [CF-061](TASKS.md#cf-061) | ⬜ Not started |

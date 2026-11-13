@@ -3,7 +3,7 @@
 Status legend: ✅ Done = verified in this repository (evidence given) · 🟡 In progress · ⛔ Blocked · ⬜ Not started.
 Generated from one data source; IDs `CF-0xx` keep the numbers already used in `docs/`. Snapshot: 2026-11-12.
 
-83 tasks — ✅ Done: 13, 🟡 In progress: 7, ⛔ Blocked: 0, ⬜ Not started: 63
+83 tasks — ✅ Done: 13, 🟡 In progress: 10, ⛔ Blocked: 0, ⬜ Not started: 60
 
 Every task also meets the general [Definition of Done](DEFINITION-OF-DONE.md).
 
@@ -447,7 +447,7 @@ Every task also meets the general [Definition of Done](DEFINITION-OF-DONE.md).
 | Field | Value |
 |---|---|
 | Task ID | CF-002 |
-| Status | 🟡 In progress — EventMetadata.v1 + ProductCreated.v1 written and registered (id 1, BACKWARD); 13 events + 4 commands remain |
+| Status | 🟡 In progress — EventMetadata, Money, ProductCreated and the 13 MVP saga messages (incl. 4 commands) written; check_schemas.py 16/16; registered in the local registry (ids 1-14) 2026-11-12. Remaining: ProductUpdated, ProductDiscontinued, ProductPriceChanged, Customer*, OrderCancelled, PaymentRefunded, StockLevelChanged, Shipment* |
 | Epic / feature | CF-EPIC-12 / F-19 Contracts and compatibility |
 | Owning service or application | `contracts/events` |
 | Priority | P0 |
@@ -666,7 +666,7 @@ Every task also meets the general [Definition of Done](DEFINITION-OF-DONE.md).
 | Field | Value |
 |---|---|
 | Task ID | CF-052 |
-| Status | ⬜ Not started |
+| Status | 🟡 In progress — PUT/GET /v1/prices with ETag/If-Match (412 stale, 428 missing) and list; code review (changes required) fixed; pricing-service unit 12/12, IT 12/12 on 2026-11-12. Not yet: ProductCreated consumer, ProductPriceChanged via outbox |
 | Epic / feature | CF-EPIC-07 / F-13 Prices and quotes |
 | Owning service or application | `services/pricing-service` |
 | Priority | P0 |
@@ -818,7 +818,7 @@ Every task also meets the general [Definition of Done](DEFINITION-OF-DONE.md).
 | Field | Value |
 |---|---|
 | Task ID | CF-053 |
-| Status | ⬜ Not started |
+| Status | 🟡 In progress — POST/GET /v1/quotes: stored, 15 min TTL, totals in minor units, 422 for unpriced SKUs/mixed currencies; server-computed expired flag; PricingApiIT 2026-11-12, review fixes retested. Expiry is enforced by order-service (CF-055); Pact pending |
 | Epic / feature | CF-EPIC-07 / F-13 Prices and quotes |
 | Owning service or application | `services/pricing-service` |
 | Priority | P0 |
@@ -911,7 +911,7 @@ Every task also meets the general [Definition of Done](DEFINITION-OF-DONE.md).
 | Field | Value |
 |---|---|
 | Task ID | CF-014 |
-| Status | ⬜ Not started |
+| Status | 🟡 In progress — MVP decision ADR-0012 (browser-side cart, guest checkout); the post-MVP cart owner is still open |
 | Epic / feature | CF-EPIC-08 / F-14 Order creation and history |
 | Owning service or application | `docs` |
 | Priority | P1 |

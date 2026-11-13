@@ -40,13 +40,13 @@ flowchart LR
         CF048["CF-048<br/>inventory-service: ReserveInventory / "]:::todo
         CF050["CF-050<br/>customer-service: profile and address "]:::todo
         CF051["CF-051<br/>customer-service: CustomerRegistered /"]:::todo
-        CF052["CF-052<br/>pricing-service: prices with ETag and "]:::todo
+        CF052["CF-052<br/>pricing-service: prices with ETag and "]:::wip
         CF094["CF-094<br/>Outbox and inbox retention jobs"]:::todo
     end
     subgraph P6["Phase 6: Order and Payment"]
-        CF014["CF-014<br/>Decide cart ownership"]:::todo
+        CF014["CF-014<br/>Decide cart ownership"]:::wip
         CF016["CF-016<br/>Choose payment provider and sandbox; d"]:::todo
-        CF053["CF-053<br/>pricing-service: price quote API"]:::todo
+        CF053["CF-053<br/>pricing-service: price quote API"]:::wip
         CF055["CF-055<br/>order-service: create order (202, idem"]:::todo
         CF056["CF-056<br/>order-service: order history read mode"]:::todo
         CF057["CF-057<br/>payment-service: AuthorizePayment / Vo"]:::todo

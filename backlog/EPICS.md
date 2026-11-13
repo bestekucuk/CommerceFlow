@@ -11,8 +11,8 @@ Generated from one data source; IDs `CF-0xx` keep the numbers already used in `d
 | **CF-EPIC-04** Product Management | Catalog bounded context: products, SKUs, lifecycle, product events. | 4 | F-08, F-09 | 3/3 | ✅ Done |
 | **CF-EPIC-05** Customer Management | Customer profiles, addresses, contact events. | 5 | F-10 | 0/2 | ⬜ Not started |
 | **CF-EPIC-06** Inventory Management | Stock, reservations, saga participation. | 5, 7 | F-11, F-12 | 1/5 | 🟡 In progress |
-| **CF-EPIC-07** Pricing and Promotions | Prices, price lists, quotes, promotions. | 5, 6 | F-13 | 0/2 | ⬜ Not started |
-| **CF-EPIC-08** Order Management | Order aggregate, order creation, order history, saga orchestration. | 6, 7 | F-14, F-15 | 0/7 | ⬜ Not started |
+| **CF-EPIC-07** Pricing and Promotions | Prices, price lists, quotes, promotions. | 5, 6 | F-13 | 0/2 | 🟡 In progress |
+| **CF-EPIC-08** Order Management | Order aggregate, order creation, order history, saga orchestration. | 6, 7 | F-14, F-15 | 0/7 | 🟡 In progress |
 | **CF-EPIC-09** Payment Management | Provider adapter, authorization, void, refund. | 6, 7 | F-16 | 0/2 | ⬜ Not started |
 | **CF-EPIC-10** Shipping Management | Shipments, carrier adapter, tracking. | 7 | F-17 | 0/2 | ⬜ Not started |
 | **CF-EPIC-11** Notification Processing | Customer notifications from order, payment and shipment events. | 7 | F-18 | 0/1 | ⬜ Not started |
@@ -70,13 +70,13 @@ Stock, reservations, saga participation.
 
 Prices, price lists, quotes, promotions.
 
-- **F-13 Prices and quotes**: [CF-052](TASKS.md#cf-052) pricing-service: prices with ETag and ProductPriceChanged (⬜ Not started), [CF-053](TASKS.md#cf-053) pricing-service: price quote API (⬜ Not started)
+- **F-13 Prices and quotes**: [CF-052](TASKS.md#cf-052) pricing-service: prices with ETag and ProductPriceChanged (🟡 In progress), [CF-053](TASKS.md#cf-053) pricing-service: price quote API (🟡 In progress)
 
 ## CF-EPIC-08 — Order Management
 
 Order aggregate, order creation, order history, saga orchestration.
 
-- **F-14 Order creation and history**: [CF-014](TASKS.md#cf-014) Decide cart ownership (⬜ Not started), [CF-055](TASKS.md#cf-055) order-service: create order (202, idempotency key) and OrderCreated (⬜ Not started), [CF-056](TASKS.md#cf-056) order-service: order history read model and GET APIs (⬜ Not started)
+- **F-14 Order creation and history**: [CF-014](TASKS.md#cf-014) Decide cart ownership (🟡 In progress), [CF-055](TASKS.md#cf-055) order-service: create order (202, idempotency key) and OrderCreated (⬜ Not started), [CF-056](TASKS.md#cf-056) order-service: order history read model and GET APIs (⬜ Not started)
 - **F-15 Order saga**: [CF-010](TASKS.md#cf-010) Order saga happy path end to end (⬜ Not started), [CF-011](TASKS.md#cf-011) Saga compensation and timeouts (⬜ Not started), [CF-059](TASKS.md#cf-059) Stuck-saga metric and saga status endpoint (⬜ Not started), [CF-062](TASKS.md#cf-062) Cancel a confirmed order (OrderCancelled flow) (⬜ Not started)
 
 ## CF-EPIC-09 — Payment Management

@@ -3,7 +3,7 @@
 Status legend: ✅ Done = verified in this repository (evidence given) · 🟡 In progress · ⛔ Blocked · ⬜ Not started.
 Generated from one data source; IDs `CF-0xx` keep the numbers already used in `docs/`. Snapshot: 2026-11-12.
 
-83 tasks — ✅ Done: 13, 🟡 In progress: 7, ⛔ Blocked: 0, ⬜ Not started: 63
+83 tasks — ✅ Done: 13, 🟡 In progress: 10, ⛔ Blocked: 0, ⬜ Not started: 60
 
 Phases are ordered by dependency, not by calendar; no dates are committed. The vertical slice (phases 3–7) is prioritised over breadth.
 
@@ -14,7 +14,7 @@ Phases are ordered by dependency, not by calendar; no dates are committed. The v
 | 3. Local infrastructure | Local stack with per-service databases, Kafka, Debezium and observability, verified healthy; CDC verified end to end. | 4 | 2 | 🟡 In progress |
 | 4. Product Service and CDC | **Vertical slice part 1**: product created via API reaches Kafka through outbox + Debezium with valid Avro; contract compatibility checks exist. | 5 | 3 | 🟡 In progress |
 | 5. Inventory and Customer | Inventory and pricing consume product events idempotently; customer profile exists. | 7 | 1 | 🟡 In progress |
-| 6. Order and Payment | Orders can be created against a quote; payment handles authorization and void. | 6 | 0 | ⬜ Not started |
+| 6. Order and Payment | Orders can be created against a quote; payment handles authorization and void. | 6 | 0 | 🟡 In progress |
 | 7. Saga and asynchronous workflows | **Vertical slice part 2**: order saga confirms, compensates and times out correctly; shipping and notifications react. | 10 | 0 | ⬜ Not started |
 | 8. Admin Dashboard | Staff manage catalog, prices and orders through the admin BFF with real identity. | 6 | 0 | ⬜ Not started |
 | 9. Storefront | Customers browse, check out and track orders. | 5 | 0 | ⬜ Not started |
@@ -77,7 +77,7 @@ Inventory and pricing consume product events idempotently; customer profile exis
 |---|---|---|---|---|
 | [CF-046](TASKS.md#cf-046) | inventory-service: consume ProductCreated with inbox and DLT | `services/inventory-service` | P0 | ✅ Done |
 | [CF-048](TASKS.md#cf-048) | inventory-service: ReserveInventory / ReleaseInventory handlers | `services/inventory-service` | P0 | ⬜ Not started |
-| [CF-052](TASKS.md#cf-052) | pricing-service: prices with ETag and ProductPriceChanged | `services/pricing-service` | P0 | ⬜ Not started |
+| [CF-052](TASKS.md#cf-052) | pricing-service: prices with ETag and ProductPriceChanged | `services/pricing-service` | P0 | 🟡 In progress |
 | [CF-047](TASKS.md#cf-047) | inventory-service: stock adjustment API | `services/inventory-service` | P1 | ⬜ Not started |
 | [CF-050](TASKS.md#cf-050) | customer-service: profile and address API | `services/customer-service` | P1 | ⬜ Not started |
 | [CF-051](TASKS.md#cf-051) | customer-service: CustomerRegistered / CustomerContactChanged | `services/customer-service` | P1 | ⬜ Not started |
@@ -89,10 +89,10 @@ Orders can be created against a quote; payment handles authorization and void.
 
 | Task | Title | Owner | Priority | Status |
 |---|---|---|---|---|
-| [CF-053](TASKS.md#cf-053) | pricing-service: price quote API | `services/pricing-service` | P0 | ⬜ Not started |
+| [CF-053](TASKS.md#cf-053) | pricing-service: price quote API | `services/pricing-service` | P0 | 🟡 In progress |
 | [CF-055](TASKS.md#cf-055) | order-service: create order (202, idempotency key) and OrderCreated | `services/order-service` | P0 | ⬜ Not started |
 | [CF-057](TASKS.md#cf-057) | payment-service: AuthorizePayment / VoidPayment with provider adapter | `services/payment-service` | P0 | ⬜ Not started |
-| [CF-014](TASKS.md#cf-014) | Decide cart ownership | `docs` | P1 | ⬜ Not started |
+| [CF-014](TASKS.md#cf-014) | Decide cart ownership | `docs` | P1 | 🟡 In progress |
 | [CF-016](TASKS.md#cf-016) | Choose payment provider and sandbox; decide capture timing | `services/payment-service` | P1 | ⬜ Not started |
 | [CF-056](TASKS.md#cf-056) | order-service: order history read model and GET APIs | `services/order-service` | P1 | ⬜ Not started |
 
